@@ -1,11 +1,18 @@
 import { ArrowRight, Eye, EyeOff, Fingerprint, IdCard } from "lucide-react";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Separator } from "../../ui/separator";
 
 export default function Loginform() {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const handlesubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    navigate("/admin");
+  };
 
   return (
     <div className="flex sm:w-105 flex-col px-6 py-6 my-auto mx-auto sm:border-2 rounded-[6px] sm:bg-white">
@@ -19,7 +26,7 @@ export default function Loginform() {
         </p>
       </div>
 
-      <form className="space-y-3">
+      <form onSubmit={handlesubmit} className="space-y-3">
         <Input
           type="text"
           placeholder="Agent ID"
