@@ -171,7 +171,7 @@ export function AppSidebar() {
                 h-8
                 rounded-lg
                 px-2.5
-                text-[11px]
+                text-[15px]
                 font-medium
                 text-gray-600
                 hover:text-gray-700
