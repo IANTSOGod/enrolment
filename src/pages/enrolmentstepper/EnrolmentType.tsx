@@ -1,15 +1,19 @@
 import { ArrowRight } from "lucide-react";
-import { useState } from "react";
 import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
 import { enrolmentMock } from "../../lib/mock";
 
 export default function EnrolmentType({
+  selectedType,
+  onTypeChange,
   onContinue,
+  onCancel,
 }: {
-  onContinue: () => void;
+  selectedType: string;
+  onTypeChange: (type: string) => void;
+  onContinue: (type: string) => void;
+  onCancel?: () => void;
 }) {
-  const [selectedType, setSelectedType] = useState("new");
 
   return (
     <>
@@ -25,7 +29,7 @@ export default function EnrolmentType({
           return (
             <Card
               key={type.id}
-              onClick={() => setSelectedType(type.id)}
+              onClick={() => onTypeChange(type.id)}
               className={`
                 min-h-75.5
                 cursor-pointer
@@ -76,6 +80,7 @@ export default function EnrolmentType({
       <div className="mt-8 flex justify-end gap-4">
         <Button
           variant="outline"
+          onClick={onCancel}
           className="
             h-12.75
             min-w-25.75
@@ -91,7 +96,7 @@ export default function EnrolmentType({
         </Button>
 
         <Button
-          onClick={onContinue}
+          onClick={() => onContinue(selectedType)}
           className="
             h-12.75
             min-w-34

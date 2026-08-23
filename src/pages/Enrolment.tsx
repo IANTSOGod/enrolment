@@ -1,12 +1,14 @@
 import { useState } from "react";
 import EnrolmentStepper from "../components/custom/EnrolmentStepper";
 import { enrolmentMock } from "../lib/mock";
-import EnrolmentBio from "./enrolmentstepper/EnrolmentBio";
-import EnrolmentDetails from "./enrolmentstepper/EnrolmentDetails";
 import EnrolmentType from "./enrolmentstepper/EnrolmentType";
+import EnrolmentBio from "./enrolmentstepper/new/EnrolmentBio";
+import EnrolmentDetails from "./enrolmentstepper/new/EnrolmentDetails";
+import EnrolmentUpdate from "./enrolmentstepper/update/EnrolmentUpdate";
 
 export default function Enrolment() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [type, setType] = useState<string>("new");
 
   return (
     <div className="bg-[#f8f9fb]">
@@ -23,21 +25,41 @@ export default function Enrolment() {
             </span>
           </p>
         </div>
-        <EnrolmentStepper currentStep={currentStep} />
+        <EnrolmentStepper currentStep={currentStep} type={type} />
       </header>
       <main className="px-12 pt-7">
         {currentStep === 1 && (
-          <EnrolmentType onContinue={() => setCurrentStep(2)} />
-        )}
-
-        {currentStep === 2 && (
-          <EnrolmentDetails
-            onBack={() => setCurrentStep(1)}
-            onContinue={() => setCurrentStep(3)}
+          <EnrolmentType
+            selectedType={type}
+            onTypeChange={setType}
+            onContinue={(n_type) => {
+              setType(n_type);
+              setCurrentStep(2);
+            }}
+            onCancel={() => setCurrentStep(1)}
           />
         )}
 
-        {currentStep === 3 && <EnrolmentBio onBack={() => setCurrentStep(2)} />}
+        {currentStep === 2 && type === "new" && (
+          <EnrolmentDetails
+            onBack={() => setCurrentStep(1)}
+            onContinue={() => {
+              setCurrentStep(3);
+            }}
+          />
+        )}
+
+        {currentStep === 3 && type === "new" && (
+          <EnrolmentBio
+            onBack={() => {
+              setCurrentStep(1);
+            }}
+          />
+        )}
+
+        {currentStep === 2 && type === "update" && (
+          <EnrolmentUpdate />
+        )}
       </main>
     </div>
   );

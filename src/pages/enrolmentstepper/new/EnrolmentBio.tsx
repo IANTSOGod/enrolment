@@ -1,27 +1,21 @@
-import { ArrowRight, UserRound } from "lucide-react";
-import { Button } from "../../components/ui/button";
+import { Check, UserRound } from "lucide-react";
+import { Button } from "../../../components/ui/button";
 
-export default function EnrolmentDetails({
-  onBack,
-  onContinue,
-}: {
-  onBack: () => void;
-  onContinue: () => void;
-}) {
+export default function EnrolmentBio({ onBack }: { onBack: () => void }) {
   return (
     <div>
       <h2 className="text-[26px] font-semibold text-[#202124]">
-        Applicant Details
+        Biometric Capture
       </h2>
 
       <p className="mt-2 text-[15px] text-[#52525b]">
-        Enter the applicant's demographic information.
+        Capture the applicant's biometric information.
       </p>
 
       <div className="mt-6 rounded-lg border bg-white p-8">
         <div className="flex items-center gap-3 text-[#52525b]">
           <UserRound className="h-5 w-5" />
-          <span>Applicant information</span>
+          <span>Biometric information</span>
         </div>
       </div>
 
@@ -35,11 +29,16 @@ export default function EnrolmentDetails({
         </Button>
 
         <Button
-          onClick={onContinue}
-          className="h-12.75 rounded-xl bg-[#20298d] px-6 hover:bg-[#1b237a]"
+          className="
+            h-12.75
+            rounded-xl
+            bg-primary
+            px-6
+            hover:bg-[#1b237a]
+          "
         >
-          Continue
-          <ArrowRight className="ml-2 h-4 w-4" />
+          Finish
+          <Check className="ml-2 h-4 w-4" />
         </Button>
       </div>
     </div>
