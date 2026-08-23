@@ -1,5 +1,6 @@
 import { CircleCheck, CirclePlus, CloudOff, UserPlus } from "lucide-react";
 
+import { useNavigate } from "react-router-dom";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
@@ -11,10 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
-
-// ============================================================
-// MOCK DATA
-// ============================================================
 
 const dashboardMock = {
   stats: {
@@ -53,6 +50,7 @@ const dashboardMock = {
 
 export default function Dashboard() {
   const { stats, recentActivity } = dashboardMock;
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-full bg-[#f8f9fb] p-6">
@@ -114,6 +112,9 @@ export default function Dashboard() {
               hover:bg-[#1b237a]
               xl:h-37
             "
+            onClick={() => {
+              navigate("/admin/enrolment");
+            }}
           >
             <div className="flex flex-col items-center gap-3">
               <CirclePlus className="size-10" strokeWidth={1.8} />
