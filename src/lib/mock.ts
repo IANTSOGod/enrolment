@@ -21,7 +21,7 @@ export const enrolmentMock = {
   dossierTypes: [
     {
       id: "new",
-      title: "Nouveau Dossier",
+      title: "New File",
       description:
         "Initiate a completely new applicant record. Requires full demographic and biometric capture.",
       icon: ClipboardList,
@@ -29,7 +29,7 @@ export const enrolmentMock = {
     },
     {
       id: "update",
-      title: "Mise à jour",
+      title: "Update file",
       description:
         "Update an existing applicant record. Requires previous application ID or search by biometrics.",
       icon: History,
@@ -37,7 +37,7 @@ export const enrolmentMock = {
     },
     {
       id: "correction",
-      title: "Correction",
+      title: "Correct application",
       description:
         "Fix errors in a recently submitted application. Requires supervisor authorization code.",
       icon: FileEdit,
