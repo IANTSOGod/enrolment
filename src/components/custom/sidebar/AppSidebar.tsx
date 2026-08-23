@@ -59,15 +59,11 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="bg-[#f8f9fb]">
-      {/* ================= PROFILE ================= */}
-
       <SidebarHeader className="border-none px-3 pt-4">
         <div className="flex flex-col items-center">
           <Avatar
             className="
               h-11 w-11 rounded-lg
-              group-data-[collapsible=icon]:h-8
-              group-data-[collapsible=icon]:w-8
             "
           >
             <AvatarImage
@@ -96,8 +92,6 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      {/* ================= MAIN MENU ================= */}
-
       <SidebarContent className="pt-3">
         <SidebarGroup className="p-0">
           <SidebarGroupContent>
@@ -118,12 +112,9 @@ export function AppSidebar() {
                         text-[11px]
                         font-medium
                         text-gray-600
-
-                        hover:bg-transparent
-                        hover:text-gray-700
-
-                        data-[active]:bg-[#dce4f5]
-                        data-[active]:text-gray-700
+                        hover:text-white
+                        hover:bg-primary
+                        data-active:bg-[#dce4f5]
                       "
                     >
                       <item.icon
@@ -140,8 +131,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      {/* ================= FOOTER ================= */}
 
       <SidebarFooter className="border-none px-2.5 pb-5">
         <SidebarMenu className="gap-1.5">
@@ -161,12 +150,8 @@ export function AppSidebar() {
                     text-[11px]
                     font-medium
                     text-gray-600
-
-                    hover:bg-transparent
                     hover:text-gray-700
-
-                    data-[active]:bg-[#dce4f5]
-                    data-[active]:text-gray-700
+                    data-active:bg-[#dce4f5]
                   "
                 >
                   <item.icon className="h-4 w-4 shrink-0" strokeWidth={1.8} />
@@ -189,8 +174,6 @@ export function AppSidebar() {
                 text-[11px]
                 font-medium
                 text-gray-600
-
-                hover:bg-transparent
                 hover:text-gray-700
               "
               onClick={() => {
