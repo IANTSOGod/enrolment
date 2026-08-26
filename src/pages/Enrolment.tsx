@@ -12,14 +12,14 @@ export default function Enrolment() {
 
   return (
     <div className="bg-[#f8f9fb]">
-      <header className="flex flex-row flex-wrap items-center justify-between gap-4 border-b border-[#d4d4d8] bg-white px-4 py-4 sm:flex-nowrap sm:items-center sm:justify-between sm:px-12 sm:py-0 sm:h-25.25">
+      <header className="flex flex-row flex-nowrap items-center justify-between gap-x-3 border-b border-[#d4d4d8] bg-white px-4 sm:h-25.25 sm:px-12">
         <div className="min-w-0">
-          <h1 className="text-xl font-bold leading-none tracking-tight text-[#202124] sm:text-[36px]">
+          <h1 className="text-md font-bold leading-none tracking-tight text-[#202124] sm:text-[36px]">
             Application Setup
           </h1>
 
-          <p className="mt-2 text-[13px] text-[#52525b] sm:text-[15px]">
-            Auto-generated ID:{" "}
+          <p className="mt-2 truncate text-[13px] text-[#52525b] sm:text-[15px]">
+            ID:{" "}
             <span className="font-medium text-[#20298d]">
               {enrolmentMock.applicationId}
             </span>
@@ -57,9 +57,7 @@ export default function Enrolment() {
           />
         )}
 
-        {currentStep === 2 && type === "update" && (
-          <EnrolmentUpdate />
-        )}
+        {currentStep === 2 && type === "update" && <EnrolmentUpdate />}
       </main>
     </div>
   );

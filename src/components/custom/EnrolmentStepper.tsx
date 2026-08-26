@@ -11,7 +11,7 @@ export default function EnrolmentStepper({
   const steps = enrolmentMock.steps;
 
   return (
-    <div className="flex w-1/2 flex-col items-center gap-1 sm:ml-auto sm:w-1/6">
+    <div className="flex w-fit shrink-0 flex-col items-center gap-1 sm:ml-auto sm:w-1/6">
       {type && (
         <span className="text-sm font-medium tracking-wide text-[#52525b]">
           {type === "new"
