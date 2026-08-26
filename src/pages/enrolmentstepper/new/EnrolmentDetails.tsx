@@ -1,35 +1,38 @@
-import { UserRound } from "lucide-react";
-import NavigationLv1stepper from "../../../components/custom/steppermanagement/NavigationLv1stepper";
+import { useState } from "react";
+import DocumentStepper from "../../../components/custom/steppermanagement/DocumentStepper";
+import VerificationHeader from "../../../components/custom/VerificationHeader";
+import DocumentVerificationCIN from "../../Documentdetails/DocumentVerificationCIN";
+import DocumentVerificationStep2 from "../../Documentdetails/DocumentVerificationStep2";
 
-export default function EnrolmentDetails({
-  onBack,
-  onContinue,
-}: {
-  onBack: () => void;
-  onContinue: () => void;
-}) {
+export default function DocumentVerification() {
+  const [stepLv2, setstepLv2] = useState<number>(1);
+
   return (
-    <div>
-      <h2 className="text-[26px] font-semibold text-[#202124]">
-        Applicant Details
-      </h2>
+    <div className="bg-[#f8f9fb]">
+      <VerificationHeader
+        title="Vérification des documents"
+        subtitle="Positionnez le document d'identité dans le cadre pour extraire et vérifier automatiquement les données."
+        applicationId="ENR-2026-8942A"
+      />
 
-      <p className="mt-2 text-[15px] text-[#52525b]">
-        Enter the applicant's demographic information.
-      </p>
-
-      <div className="mt-6 rounded-lg border bg-white p-8">
-        <div className="flex items-center gap-3 text-[#52525b]">
-          <UserRound className="h-5 w-5" />
-          <span>Applicant information</span>
+      <div className="flex flex-col gap-6 p-6 sm:flex-row sm:p-8">
+        <div className="w-full sm:h-full sm:w-auto">
+          <DocumentStepper currentStep={stepLv2} />
         </div>
-      </div>
 
-      <NavigationLv1stepper
-        onBack={onBack}
-        onContinue={onContinue}
-        isfinal={false}
-      ></NavigationLv1stepper>
+        {stepLv2 == 1 && (
+          <DocumentVerificationCIN
+            onBack={() => {}}
+            onContinue={() => {
+              setstepLv2(2);
+            }}
+            isfinal={false}
+          ></DocumentVerificationCIN>
+        )}
+        {stepLv2 == 2 && (
+          <DocumentVerificationStep2></DocumentVerificationStep2>
+        )}
+      </div>
     </div>
   );
 }
