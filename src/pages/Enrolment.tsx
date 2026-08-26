@@ -1,9 +1,9 @@
 import { useState } from "react";
 import EnrolmentStepper from "../components/custom/steppermanagement/EnrolmentStepper";
 import { enrolmentMock } from "../lib/mock";
+import DocumentVerification from "./Documentdetails/DocumentVerification";
 import EnrolmentType from "./enrolmentstepper/EnrolmentType";
 import EnrolmentBio from "./enrolmentstepper/new/EnrolmentBio";
-import EnrolmentDetails from "./enrolmentstepper/new/EnrolmentDetails";
 import EnrolmentUpdate from "./enrolmentstepper/update/EnrolmentUpdate";
 
 export default function Enrolment() {
@@ -41,12 +41,7 @@ export default function Enrolment() {
         )}
 
         {currentStep === 2 && type === "new" && (
-          <EnrolmentDetails
-            onBack={() => setCurrentStep(1)}
-            onContinue={() => {
-              setCurrentStep(3);
-            }}
-          />
+          <DocumentVerification></DocumentVerification>
         )}
 
         {currentStep === 3 && type === "new" && (

@@ -2,7 +2,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { Button } from "../../ui/button";
 import { Label } from "../../ui/label";
 
-export default function Navigationstepper({
+export default function NavigationLv1stepper({
   onBack,
   onContinue,
   isfinal,

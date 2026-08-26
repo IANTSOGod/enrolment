@@ -1,5 +1,5 @@
 import { UserRound } from "lucide-react";
-import Navigationstepper from "../../../components/custom/steppermanagement/Navigationstepper";
+import NavigationLv1stepper from "../../../components/custom/steppermanagement/NavigationLv1stepper";
 
 export default function EnrolmentBio({ onBack }: { onBack: () => void }) {
   return (
@@ -19,11 +19,11 @@ export default function EnrolmentBio({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
-      <Navigationstepper
+      <NavigationLv1stepper
         onBack={onBack}
         onContinue={() => {}}
         isfinal={true}
-      ></Navigationstepper>
+      ></NavigationLv1stepper>
     </div>
   );
 }
