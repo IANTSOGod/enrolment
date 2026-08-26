@@ -11,7 +11,7 @@ export default function Loginform() {
 
   const handlesubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    navigate("/admin/Dashboard");
+    navigate("/admin/dashboard");
   };
 
   return (
