@@ -143,8 +143,8 @@ export default function Dashboard() {
             View All
           </Button>
         </div>
-        <div className="overflow-hidden rounded-lg border border-[#dedede] bg-white">
-          <Table>
+        <div className="overflow-x-auto rounded-lg border border-[#dedede] bg-white">
+          <Table className="min-w-[560px]">
             <TableHeader>
               <TableRow className="bg-[#f4f4f5] hover:bg-[#f4f4f5]">
                 <TableHead className="h-9 px-4 text-[11px] font-medium uppercase tracking-wide text-[#52525b]">

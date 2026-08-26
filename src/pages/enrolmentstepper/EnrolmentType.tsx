@@ -17,11 +17,11 @@ export default function EnrolmentType({
 
   return (
     <>
-      <h2 className="text-[26px] font-semibold text-[#202124]">
+      <h2 className="text-xl font-semibold text-[#202124] sm:text-[26px]">
         Select Dossier Type
       </h2>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4">
         {enrolmentMock.dossierTypes.map((type) => {
           const Icon = type.icon;
           const selected = selectedType === type.id;
@@ -31,12 +31,14 @@ export default function EnrolmentType({
               key={type.id}
               onClick={() => onTypeChange(type.id)}
               className={`
-                min-h-75.5
+                min-h-40
                 cursor-pointer
                 rounded-lg
-                p-6
+                p-4
                 shadow-none
                 transition-none
+                md:min-h-75.5
+                md:p-6
 
                 ${
                   selected
@@ -48,11 +50,12 @@ export default function EnrolmentType({
               <div
                 className={`
                   flex
-                  h-12.75
-                  w-12.75
+                  h-10 w-10
                   items-center
                   justify-center
                   rounded-xl
+                  md:h-12.75
+                  md:w-12.75
 
                   ${
                     selected
@@ -63,21 +66,21 @@ export default function EnrolmentType({
                   }
                 `}
               >
-                <Icon className="h-6 w-6" strokeWidth={1.8} />
+                <Icon className="h-5 w-5 md:h-6 md:w-6" strokeWidth={1.8} />
               </div>
 
-              <h3 className="mt-6 text-[22px] font-semibold text-[#202124]">
+              <h3 className="mt-4 text-lg font-semibold text-[#202124] sm:text-[22px]">
                 {type.title}
               </h3>
 
-              <p className="mt-1 text-[15px] leading-[1.4] text-[#52525b]">
+              <p className="mt-1 text-sm leading-[1.4] text-[#52525b] sm:text-[15px]">
                 {type.description}
               </p>
             </Card>
           );
         })}
       </div>
-      <div className="mt-8 flex justify-end gap-4">
+      <div className="mt-6 flex justify-end gap-4 sm:mt-8">
         <Button
           variant="outline"
           onClick={onCancel}

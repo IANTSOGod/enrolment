@@ -9,36 +9,39 @@ export default function EnrolmentStepper({
   type: string;
 }) {
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className="flex flex-col items-center gap-1">
       {type && (
-        <span className="text-primary font-medium  tracking-wide">
+        <span className="text-sm font-medium tracking-wide text-[#52525b]">
           {type === "new"
-            ? "New file"
+            ? "Nouveau Dossier"
             : type === "update"
-              ? "Update file"
+              ? "Mise à jour"
               : "Correction"}
         </span>
       )}
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-2 sm:gap-3">
         {enrolmentMock.steps.map((step, index) => {
           const active = currentStep === step.id;
           const completed = currentStep > step.id;
           const last = index === enrolmentMock.steps.length - 1;
 
           return (
-            <div key={step.id} className="flex items-start">
+            <div key={step.id} className="flex items-center">
               <div className="flex flex-col items-center">
                 <div
                   className={`
                     flex
-                    h-8.5
-                    w-8.5
+                    h-8 w-8
                     items-center
                     justify-center
-                    rounded-xl
+                    rounded-lg
                     border-2
-                    text-[14px]
+                    text-xs
                     font-medium
+                    sm:h-8.5
+                    sm:w-8.5
+                    sm:text-[14px]
+                    sm:rounded-xl
 
                     ${
                       active || completed
@@ -47,14 +50,15 @@ export default function EnrolmentStepper({
                     }
                   `}
                 >
-                  {completed ? <Check className="h-4 w-4" /> : step.id}
+                  {completed ? <Check className="h-3 w-3 sm:h-4 sm:w-4" /> : step.id}
                 </div>
 
-                {/* Label */}
                 <span
                   className={`
                     mt-1
-                    text-[11px]
+                    whitespace-nowrap
+                    text-[10px]
+                    sm:text-[11px]
                     ${active ? "font-semibold text-[#080f83]" : "text-[#71717a]"}
                   `}
                 >
@@ -65,11 +69,13 @@ export default function EnrolmentStepper({
               {!last && (
                 <div
                   className={`
-                    mt-4
                     mx-1
-                    h-0.75                  
-                    w-8.5
+                    h-0.5
+                    w-6
                     rounded-full
+                    sm:mt-4
+                    sm:h-0.75
+                    sm:w-8.5
 
                     ${completed ? "bg-[#080f83]" : "bg-[#c7c9d8]"}
                   `}

@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./index.css";
 import Login from "./pages/Login";
 
@@ -20,12 +20,7 @@ createRoot(document.getElementById("root")!).render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login></Login>}></Route>
-          <Route element={<DashboardLayout />}>
-            <Route
-              path="/admin"
-              element={<Navigate to="/admin/dashboard" replace />}
-            />
-
+          <Route path="/admin" element={<DashboardLayout />}>
             <Route path="/admin/dashboard" element={<Dashboard />} />
 
             <Route path="/admin/enrolment" element={<Enrolment />} />

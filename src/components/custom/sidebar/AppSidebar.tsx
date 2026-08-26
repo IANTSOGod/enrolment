@@ -21,7 +21,9 @@ import {
 
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useSidebar } from "../../ui/sidebar";
+import * as React from "react";
 
 const mainItems = [
   {
@@ -56,6 +58,14 @@ const bottomItems = [
 
 export function AppSidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { setOpenMobile, isMobile } = useSidebar();
+
+  React.useEffect(() => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  }, [location.pathname, isMobile, setOpenMobile]);
 
   return (
     <Sidebar collapsible="icon" className="bg-[#f8f9fb]">
@@ -177,7 +187,7 @@ export function AppSidebar() {
                 hover:text-gray-700
               "
               onClick={() => {
-                console.log("logout");
+                navigate("/");
               }}
             >
               <LogOut className="h-4 w-4 shrink-0" strokeWidth={1.8} />
