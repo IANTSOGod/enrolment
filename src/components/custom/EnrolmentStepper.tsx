@@ -8,8 +8,10 @@ export default function EnrolmentStepper({
   currentStep: number;
   type: string;
 }) {
+  const steps = enrolmentMock.steps;
+
   return (
-    <div className="flex flex-col items-center gap-1">
+    <div className="flex w-1/2 flex-col items-center gap-1 sm:ml-auto sm:w-1/6">
       {type && (
         <span className="text-sm font-medium tracking-wide text-[#52525b]">
           {type === "new"
@@ -19,68 +21,60 @@ export default function EnrolmentStepper({
               : "Correction"}
         </span>
       )}
-      <div className="flex items-start gap-2 sm:gap-3">
-        {enrolmentMock.steps.map((step, index) => {
+
+      <div
+        className="grid w-full"
+        style={{
+          gridTemplateColumns: steps
+            .map((_, i) =>
+              i === steps.length - 1 ? "auto" : "auto minmax(1.5rem,1fr)",
+            )
+            .join(" "),
+        }}
+      >
+        {steps.map((step, index) => {
           const active = currentStep === step.id;
           const completed = currentStep > step.id;
-          const last = index === enrolmentMock.steps.length - 1;
+          const last = index === steps.length - 1;
+          const circleCol = index * 2 + 1;
 
           return (
-            <div key={step.id} className="flex items-center">
-              <div className="flex flex-col items-center">
-                <div
-                  className={`
-                    flex
-                    h-8 w-8
-                    items-center
-                    justify-center
-                    rounded-lg
-                    border-2
-                    text-xs
-                    font-medium
-                    sm:h-8.5
-                    sm:w-8.5
-                    sm:text-[14px]
-                    sm:rounded-xl
-
-                    ${
-                      active || completed
-                        ? "border-[#080f83] bg-[#080f83] text-white"
-                        : "border-[#c7c9d8] bg-white text-[#71717a]"
-                    }
-                  `}
-                >
-                  {completed ? <Check className="h-3 w-3 sm:h-4 sm:w-4" /> : step.id}
-                </div>
-
-                <span
-                  className={`
-                    mt-1
-                    whitespace-nowrap
-                    text-[10px]
-                    sm:text-[11px]
-                    ${active ? "font-semibold text-[#080f83]" : "text-[#71717a]"}
-                  `}
-                >
-                  {step.label}
-                </span>
+            <div key={step.id} className="contents">
+              {/* Cercle */}
+              <div
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border-2 text-xs font-medium sm:h-8.5 sm:w-8.5 sm:rounded-xl sm:text-[14px] ${
+                  active || completed
+                    ? "border-primary bg-primary text-white"
+                    : "border-[#c7c9d8] bg-white text-[#71717a]"
+                }`}
+                style={{ gridColumn: circleCol, gridRow: 1 }}
+              >
+                {completed ? (
+                  <Check className="h-3 w-3 sm:h-4 sm:w-4" />
+                ) : (
+                  step.id
+                )}
               </div>
 
+              {/* Connecteur — remplit toute la largeur entre deux cercles */}
               {!last && (
                 <div
-                  className={`
-                    mx-1
-                    h-0.5
-                    w-6
-                    rounded-full
-                    sm:mt-4
-                    sm:h-0.75
-                    sm:w-8.5
-
-                    ${completed ? "bg-[#080f83]" : "bg-[#c7c9d8]"}
-                  `}
+                  className={`h-0.5 w-full self-center sm:h-0.75 ${
+                    completed ? "bg-primary" : "bg-[#c7c9d8]"
+                  }`}
+                  style={{ gridColumn: circleCol + 1, gridRow: 1 }}
                 />
               )}
+
+              {/* Label — centré uniquement sous le cercle */}
+              <span
+                className={`mt-1 justify-self-center whitespace-nowrap text-[10px] sm:text-[11px] ${
+                  active ? "font-semibold text-primary" : "text-[#71717a]"
+                }`}
+                style={{ gridColumn: circleCol, gridRow: 2 }}
+              >
+                {step.label}
+              </span>
             </div>
           );
         })}

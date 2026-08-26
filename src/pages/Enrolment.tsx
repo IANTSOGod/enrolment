@@ -12,7 +12,7 @@ export default function Enrolment() {
 
   return (
     <div className="bg-[#f8f9fb]">
-      <header className="flex flex-row flex-wrap items-center justify-between gap-3 border-b border-[#d4d4d8] bg-white px-4 py-4 sm:flex-nowrap sm:items-center sm:justify-between sm:px-12 sm:py-0 sm:h-25.25">
+      <header className="flex flex-row flex-wrap items-center justify-between gap-4 border-b border-[#d4d4d8] bg-white px-4 py-4 sm:flex-nowrap sm:items-center sm:justify-between sm:px-12 sm:py-0 sm:h-25.25">
         <div className="min-w-0">
           <h1 className="text-xl font-bold leading-none tracking-tight text-[#202124] sm:text-[36px]">
             Application Setup
@@ -25,9 +25,7 @@ export default function Enrolment() {
             </span>
           </p>
         </div>
-        <div className="shrink-0">
-          <EnrolmentStepper currentStep={currentStep} type={type} />
-        </div>
+        <EnrolmentStepper currentStep={currentStep} type={type} />
       </header>
       <main className="px-4 pt-7 sm:px-12">
         {currentStep === 1 && (
