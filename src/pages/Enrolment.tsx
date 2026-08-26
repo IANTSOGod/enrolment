@@ -1,5 +1,5 @@
 import { useState } from "react";
-import EnrolmentStepper from "../components/custom/EnrolmentStepper";
+import EnrolmentStepper from "../components/custom/steppermanagement/EnrolmentStepper";
 import { enrolmentMock } from "../lib/mock";
 import EnrolmentType from "./enrolmentstepper/EnrolmentType";
 import EnrolmentBio from "./enrolmentstepper/new/EnrolmentBio";
@@ -52,7 +52,7 @@ export default function Enrolment() {
         {currentStep === 3 && type === "new" && (
           <EnrolmentBio
             onBack={() => {
-              setCurrentStep(1);
+              setCurrentStep(2);
             }}
           />
         )}

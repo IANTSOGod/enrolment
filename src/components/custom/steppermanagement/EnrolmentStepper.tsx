@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import { enrolmentMock } from "../../lib/mock";
+import { enrolmentMock } from "../../../lib/mock";
 
 export default function EnrolmentStepper({
   currentStep,

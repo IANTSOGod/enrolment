@@ -1,5 +1,5 @@
-import { Check, UserRound } from "lucide-react";
-import { Button } from "../../../components/ui/button";
+import { UserRound } from "lucide-react";
+import Navigationstepper from "../../../components/custom/steppermanagement/Navigationstepper";
 
 export default function EnrolmentBio({ onBack }: { onBack: () => void }) {
   return (
@@ -19,28 +19,11 @@ export default function EnrolmentBio({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
-      <div className="mt-8 flex justify-end gap-4">
-        <Button
-          variant="outline"
-          onClick={onBack}
-          className="h-12.75 rounded-xl px-6"
-        >
-          Back
-        </Button>
-
-        <Button
-          className="
-            h-12.75
-            rounded-xl
-            bg-primary
-            px-6
-            hover:bg-[#1b237a]
-          "
-        >
-          Finish
-          <Check className="ml-2 h-4 w-4" />
-        </Button>
-      </div>
+      <Navigationstepper
+        onBack={onBack}
+        onContinue={() => {}}
+        isfinal={true}
+      ></Navigationstepper>
     </div>
   );
 }
