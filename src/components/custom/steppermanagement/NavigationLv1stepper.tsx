@@ -12,7 +12,7 @@ export default function NavigationLv1stepper({
   isfinal: boolean;
 }) {
   return (
-    <div className="mt-8 flex justify-end gap-4">
+    <div className="mt-0 mb-0 flex justify-end gap-4">
       <Button
         variant="outline"
         onClick={onBack}

@@ -4,7 +4,11 @@ import VerificationHeader from "../../../components/custom/VerificationHeader";
 import DocumentVerificationCIN from "../../Documentdetails/DocumentVerificationCIN";
 import DocumentVerificationStep2 from "../../Documentdetails/DocumentVerificationStep2";
 
-export default function DocumentVerification() {
+export default function EnrolmentDetails({
+  setlv1step,
+}: {
+  setlv1step: (step: number) => void;
+}) {
   const [stepLv2, setstepLv2] = useState<number>(1);
 
   return (
@@ -22,7 +26,9 @@ export default function DocumentVerification() {
 
         {stepLv2 == 1 && (
           <DocumentVerificationCIN
-            onBack={() => {}}
+            onBack={() => {
+              setlv1step(1);
+            }}
             onContinue={() => {
               setstepLv2(2);
             }}

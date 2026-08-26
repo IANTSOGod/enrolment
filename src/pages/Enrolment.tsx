@@ -41,7 +41,7 @@ export default function Enrolment() {
         )}
 
         {currentStep === 2 && type === "new" && (
-          <EnrolmentDetails></EnrolmentDetails>
+          <EnrolmentDetails setlv1step={setCurrentStep}></EnrolmentDetails>
         )}
 
         {currentStep === 3 && type === "new" && (
