@@ -19,7 +19,7 @@ export default function EnrolmentDetails({
         applicationId="ENR-2026-8942A"
       />
 
-      <div className="flex flex-col gap-6 p-6 sm:flex-row sm:p-8">
+      <div className="flex flex-col  gap-6 p-6 sm:flex-row sm:p-8">
         <div className="w-full sm:h-full sm:w-auto">
           <DocumentStepper currentStep={stepLv2} />
         </div>
