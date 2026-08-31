@@ -3,7 +3,7 @@ import QualityRow from "../../components/custom/QualityRow";
 
 export default function DocumentVerificationStep2() {
   return (
-    <div className="w-full max-w-200">
+    <div className="w-full max-w-full ">
       {/* Titre */}
       <div className="mb-5">
         <h1 className="text-[20px] font-bold leading-tight text-[#092b50]">
@@ -113,7 +113,7 @@ export default function DocumentVerificationStep2() {
         {/* =========================
             COLONNE DROITE
         ========================== */}
-        <div className="w-47.5 shrink-0">
+        <div className="w-80 shrink-0">
           {/* Dernière capture */}
           <div
             className="

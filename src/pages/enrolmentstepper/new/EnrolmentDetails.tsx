@@ -36,7 +36,9 @@ export default function EnrolmentDetails({
           ></DocumentVerificationCIN>
         )}
         {stepLv2 == 2 && (
+          <div className="w-full">
           <DocumentVerificationStep2></DocumentVerificationStep2>
+          </div>
         )}
       </div>
     </div>
