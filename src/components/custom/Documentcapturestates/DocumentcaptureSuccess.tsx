@@ -5,14 +5,9 @@ export default function DocumentCaptureSuccess({
   copyLabel = "Copie Originale",
   mrzStatus,
   nfcStatus,
-}: {
-  imageUrl: string;
-  copyLabel?: string;
-  mrzStatus: { label: string; value: string; valid: boolean };
-  nfcStatus: { label: string; value: string; valid: boolean };
-}) {
+}: Documentcapturesuccessinterface) {
   return (
-    <div className="sm:w-[600px] flex flex-col gap-4 rounded-xl border border-[#e4e4e7] bg-white p-5">
+    <div className="sm:w-150 flex flex-col gap-4 rounded-xl border border-[#e4e4e7] bg-white p-5">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold text-[#0f172a]">
           Aperçu en direct / Capture

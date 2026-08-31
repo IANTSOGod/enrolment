@@ -1,17 +1,11 @@
 import { CheckCircle2 } from "lucide-react";
-import type { ReactNode } from "react";
 
 export default function QualityRow({
   icon,
   label,
   status,
   success = false,
-}: {
-  icon: ReactNode;
-  label: string;
-  status: string;
-  success?: boolean;
-}) {
+}: Qualityrowinterface) {
   return (
     <div className="flex items-center justify-between gap-1">
       <div className="flex min-w-0 items-center gap-1.5 text-[9px] text-gray-600">
@@ -24,7 +18,7 @@ export default function QualityRow({
 
       <span
         className={`
-          shrink-0 rounded-[2px] px-1 py-[1px]
+          shrink-0 rounded-xs px-1 py-px
           text-[7px] font-medium
           ${
             success

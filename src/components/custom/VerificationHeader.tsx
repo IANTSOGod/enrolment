@@ -2,11 +2,7 @@ export default function VerificationHeader({
   title,
   subtitle,
   applicationId,
-}: {
-  title: string;
-  subtitle: string;
-  applicationId: string;
-}) {
+}: VerificationHeaderinterface) {
   return (
     <div className="flex flex-row flex-nowrap items-start justify-between gap-x-3 px-6 sm:px-8">
       <div className="min-w-0">

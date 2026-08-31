@@ -8,13 +8,7 @@ export default function EnrolmentType({
   onTypeChange,
   onContinue,
   onCancel,
-}: {
-  selectedType: string;
-  onTypeChange: (type: string) => void;
-  onContinue: (type: string) => void;
-  onCancel?: () => void;
-}) {
-
+}: EnrolmentTypeinterface) {
   return (
     <>
       <h2 className="text-xl font-semibold text-[#202124] sm:text-[26px]">

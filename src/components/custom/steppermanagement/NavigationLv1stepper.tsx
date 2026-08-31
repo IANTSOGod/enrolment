@@ -7,12 +7,7 @@ export default function NavigationLv1stepper({
   onContinue,
   isfinal,
   disabled,
-}: {
-  onBack: () => void;
-  onContinue: () => void;
-  isfinal: boolean;
-  disabled:boolean
-}) {
+}: NavigationStepperinterface) {
   return (
     <div className="mt-0 mb-0 flex justify-end gap-4">
       <Button

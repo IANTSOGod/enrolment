@@ -8,11 +8,7 @@ export default function DocumentVerificationCIN({
   onBack,
   onContinue,
   isfinal,
-}: {
-  onBack: () => void;
-  onContinue: () => void;
-  isfinal: boolean;
-}) {
+}: Documentverificationcininterface) {
   const [verifstate, setverifstate] = useState<number>(0);
 
   return (

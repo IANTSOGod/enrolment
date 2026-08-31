@@ -3,7 +3,7 @@ import QualityRow from "../../components/custom/QualityRow";
 
 export default function DocumentVerificationStep2() {
   return (
-    <div className="w-full max-w-[800px]">
+    <div className="w-full max-w-200">
       {/* Titre */}
       <div className="mb-5">
         <h1 className="text-[20px] font-bold leading-tight text-[#092b50]">
@@ -16,18 +16,18 @@ export default function DocumentVerificationStep2() {
       </div>
 
       {/* Zone principale */}
-      <div className="flex items-start gap-[22px]">
+      <div className="flex items-start gap-5.5">
         {/* =========================
             ZONE DE CAPTURE
         ========================== */}
-        <div className="relative w-[355px] shrink-0">
+        <div className="relative w-88.75 shrink-0">
           <div
             className="
               relative
-              h-[379px]
-              w-[355px]
+              h-94.75
+              w-88.75
               overflow-hidden
-              rounded-[4px]
+              rounded-lg
               bg-gray-500
             "
           >
@@ -44,8 +44,8 @@ export default function DocumentVerificationStep2() {
                 absolute
                 left-1/2
                 top-[48%]
-                h-[185px]
-                w-[185px]
+                h-46.25
+                w-46.25
                 -translate-x-1/2
                 -translate-y-1/2
                 rounded-full
@@ -87,11 +87,11 @@ export default function DocumentVerificationStep2() {
               type="button"
               className="
                 absolute
-                bottom-[9px]
+                bottom-2.25
                 left-1/2
                 flex
-                h-[40px]
-                w-[40px]
+                h-10
+                w-10
                 -translate-x-1/2
                 items-center
                 justify-center
@@ -113,7 +113,7 @@ export default function DocumentVerificationStep2() {
         {/* =========================
             COLONNE DROITE
         ========================== */}
-        <div className="w-[190px] shrink-0">
+        <div className="w-47.5 shrink-0">
           {/* Dernière capture */}
           <div
             className="
@@ -121,30 +121,30 @@ export default function DocumentVerificationStep2() {
               border
               border-gray-200
               bg-white
-              p-[14px]
+              p-3.5
             "
           >
-            <h2 className="mb-[10px] text-[12px] font-semibold text-[#092b50]">
+            <h2 className="mb-2.5 text-[12px] font-semibold text-[#092b50]">
               Dernière capture
             </h2>
 
             {/* Image */}
-            <div className="overflow-hidden rounded-[2px] border border-gray-200">
+            <div className="overflow-hidden rounded-xs border border-gray-200">
               <img
                 src="/images/photo-capture.jpg"
                 alt="Dernière capture"
-                className="h-[132px] w-full object-cover"
+                className="h-33 w-full object-cover"
               />
             </div>
 
             {/* Boutons */}
-            <div className="mt-[9px] space-y-[5px]">
+            <div className="mt-2.25 space-y-1.25">
               <button
                 type="button"
                 className="
-                  h-[27px]
+                  h-6.75
                   w-full
-                  rounded-[2px]
+                  rounded-xs
                   border
                   border-[#173d68]
                   bg-white
@@ -161,9 +161,9 @@ export default function DocumentVerificationStep2() {
               <button
                 type="button"
                 className="
-                  h-[27px]
+                  h-6.75
                   w-full
-                  rounded-[2px]
+                  rounded-xs
                   bg-[#062d54]
                   text-[9px]
                   font-medium
@@ -180,19 +180,19 @@ export default function DocumentVerificationStep2() {
           {/* Contrôles qualité */}
           <div
             className="
-              mt-[10px]
+              mt-2.5
               rounded-[5px]
               border
               border-gray-200
               bg-white
-              p-[12px]
+              p-3
             "
           >
-            <h2 className="mb-[10px] text-[12px] font-semibold text-[#092b50]">
+            <h2 className="mb-2.5 text-[12px] font-semibold text-[#092b50]">
               Contrôles de qualité
             </h2>
 
-            <div className="space-y-[8px]">
+            <div className="space-y-2">
               <QualityRow
                 icon={<Sun size={13} />}
                 label="Éclairage"

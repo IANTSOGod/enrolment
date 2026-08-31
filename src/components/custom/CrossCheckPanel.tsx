@@ -1,20 +1,6 @@
 import { AlertCircle, CheckCircle2, PenLine } from "lucide-react";
 import { useState } from "react";
 
-type CrossCheckField = {
-  key: string;
-  label: string;
-  ocrValue: string;
-  inputValue: string;
-};
-
-type CrossCheckPanelProps = {
-  confidence: number;
-  fields: CrossCheckField[];
-  onChange?: (fieldKey: string, value: string) => void;
-  onManualVerify?: (fieldKey: string) => void;
-};
-
 export default function CrossCheckPanel({
   confidence,
   fields,
