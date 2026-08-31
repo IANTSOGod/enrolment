@@ -1,6 +1,6 @@
 import { CheckCircle2, ScanLine, Volume2 } from "lucide-react";
 
-export default function DocumentCapturePanel({
+export default function DocumentCaptureSuccess({
   imageUrl,
   copyLabel = "Copie Originale",
   mrzStatus,
@@ -12,7 +12,7 @@ export default function DocumentCapturePanel({
   nfcStatus: { label: string; value: string; valid: boolean };
 }) {
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-[#e4e4e7] bg-white p-5">
+    <div className="sm:w-[600px] flex flex-col gap-4 rounded-xl border border-[#e4e4e7] bg-white p-5">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold text-[#0f172a]">
           Aperçu en direct / Capture
@@ -23,13 +23,17 @@ export default function DocumentCapturePanel({
         </span>
       </div>
 
-      <div className="relative overflow-hidden rounded-lg border border-[#e4e4e7]">
+      <div className="flex flex-row relative gap-5 overflow-hidden">
         <img
           src={imageUrl}
           alt="Document capturé"
-          className="h-64 w-full object-cover sm:h-72"
+          className="h-64 w-64 object-cover sm:h-72 rounded-lg border border-[#e4e4e7]"
         />
-        <div className="pointer-events-none absolute inset-3 rounded-md border-2 border-emerald-500" />
+        <img
+          src={imageUrl}
+          alt="Document capturé 2"
+          className="h-64 w-64 object-cover sm:h-72 rounded-lg border border-[#e4e4e7]"
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
