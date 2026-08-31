@@ -23,7 +23,7 @@ export default function DocumentCaptureSuccess({
         </span>
       </div>
 
-      <div className="flex flex-row relative gap-5 overflow-hidden">
+      <div className="flex flex-col items-center align-center justify-center sm:flex-row relative gap-5 overflow-hidden">
         <img
           src={imageUrl}
           alt="Document capturé"

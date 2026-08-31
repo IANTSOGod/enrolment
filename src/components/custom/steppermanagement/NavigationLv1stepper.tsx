@@ -6,10 +6,12 @@ export default function NavigationLv1stepper({
   onBack,
   onContinue,
   isfinal,
+  disabled,
 }: {
   onBack: () => void;
   onContinue: () => void;
   isfinal: boolean;
+  disabled:boolean
 }) {
   return (
     <div className="mt-0 mb-0 flex justify-end gap-4">
@@ -30,6 +32,7 @@ export default function NavigationLv1stepper({
             hover:bg-[#1b237a]
           "
         onClick={onContinue}
+        disabled={disabled}
       >
         {isfinal ? (
           <>

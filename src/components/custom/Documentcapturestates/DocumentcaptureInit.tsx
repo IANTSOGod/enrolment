@@ -25,7 +25,7 @@ export default function DocumentcaptureInit({
         </h2>
       </div>
 
-      <div className="flex flex-row gap-5 relative overflow-hidden">
+      <div className="flex flex-col sm:flex-row items-center align-center justify-center gap-5 relative overflow-hidden">
         <div className="h-64 w-full object-cover sm:h-72 bg-primary text-white rounded-lg border border-[#e4e4e7]">
           Recto
         </div>

@@ -45,21 +45,18 @@ export default function DocumentVerificationCIN({
                 label: "Nom de famille",
                 ocrValue: "RAKOTOMALALA",
                 inputValue: "Rakotomalala",
-                match: true,
               },
               {
                 key: "naissance",
                 label: "Date de naissance",
                 ocrValue: "15/04/1985",
                 inputValue: "15/04/1985",
-                match: true,
               },
               {
                 key: "lieu",
                 label: "Lieu de naissance",
                 ocrValue: "ANTANNARIVO",
                 inputValue: "Antananarivo",
-                match: false,
               },
             ]}
           />
@@ -69,6 +66,7 @@ export default function DocumentVerificationCIN({
         onBack={onBack}
         onContinue={onContinue}
         isfinal={isfinal}
+        disabled={verifstate == 1 ? false : true}
       ></NavigationLv1stepper>
     </div>
   );

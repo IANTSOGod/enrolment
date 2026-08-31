@@ -23,6 +23,7 @@ export default function EnrolmentBio({ onBack }: { onBack: () => void }) {
         onBack={onBack}
         onContinue={() => {}}
         isfinal={true}
+        disabled={false}
       ></NavigationLv1stepper>
     </div>
   );
