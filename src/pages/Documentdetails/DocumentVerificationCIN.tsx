@@ -59,7 +59,7 @@ export default function DocumentVerificationCIN({
         )}
       </main>
       <NavigationLv1stepper
-        onBack={onBack}
+        onBack={verifstate == 0 ? onBack : () => setverifstate(0)}
         onContinue={onContinue}
         isfinal={isfinal}
         disabled={verifstate == 1 ? false : true}
