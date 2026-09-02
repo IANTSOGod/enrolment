@@ -1,4 +1,4 @@
-export default async function UploadCIN(): Promise<boolean> {
+export async function UploadCIN(): Promise<boolean> {
   const result = true;
   return result;
 }

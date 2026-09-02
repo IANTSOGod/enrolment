@@ -51,3 +51,21 @@ interface EnrolmentTypeinterface {
   onContinue: (type: string) => void;
   onCancel?: () => void;
 }
+
+type StatOverview = {
+  enrolmentsToday: number;
+  pendingSync: number;
+};
+
+type ActivityRow = {
+  id: number;
+  applicantName: string;
+  reference: string;
+  time: string;
+  status: "synced" | "local-only";
+};
+
+interface Dashboardinterface {
+  stats: StatOverview;
+  recentActivity: ActivityRow[];
+}
