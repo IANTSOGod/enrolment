@@ -45,7 +45,7 @@ export interface EnrolmentPayload {
 export const mockEnrolmentPayload: EnrolmentPayload = {
 	person: {
 		first_name: 'Jean',
-		last_name: 'RAKOTO',
+		last_name: 'Rakotomalala1',
 		date_of_birth: '1995-06-15',
 		birth_place: 'Antananarivo',
 		country_of_birth_id: '9d4a3e6b-4971-4baa-94ea-aa42489a2c54',
@@ -67,7 +67,7 @@ export const mockEnrolmentPayload: EnrolmentPayload = {
 	relationships: [
 		{
 			related_person_id: '550e8400-e29b-41d4-a716-446655440000',
-			related_person_name: 'RAKOTO Jean',
+			related_person_name: 'Rakotomalala1 Jean',
 			relationship_type: 'FATHER'
 		}
 	],
@@ -97,7 +97,18 @@ export function validateEnrolmentPayload(data: EnrolmentPayload): string[] {
 
 	if (!data.person.first_name.trim()) errors.push('Le prénom est obligatoire.');
 	if (!data.person.last_name.trim()) errors.push('Le nom est obligatoire.');
-	if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(data.person.date_of_birth)) {
+	const dateOfBirth = data.person.date_of_birth.trim();
+	const dateParts = dateOfBirth.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+	const parsedDate = dateParts
+		? new Date(Number(dateParts[1]), Number(dateParts[2]) - 1, Number(dateParts[3]))
+		: null;
+	const isValidDate =
+		parsedDate !== null &&
+		parsedDate.getFullYear() === Number(dateParts?.[1]) &&
+		parsedDate.getMonth() === Number(dateParts?.[2]) - 1 &&
+		parsedDate.getDate() === Number(dateParts?.[3]);
+
+	if (!isValidDate) {
 		errors.push('La date de naissance doit être au format YYYY-MM-DD.');
 	}
 	if (!data.person.country_of_birth_id) errors.push('Le pays de naissance est obligatoire.');
@@ -114,13 +125,19 @@ export async function createEnrolment(
 	data: EnrolmentPayload,
 	options: RequestInit = {}
 ): Promise<unknown> {
+	const accessToken = localStorage.getItem('accessToken');
+	if (!accessToken) {
+		throw new Error('Session expirée. Veuillez vous reconnecter.');
+	}
+
+	const headers = new Headers(options.headers);
+	headers.set('Content-Type', 'application/json');
+	headers.set('Authorization', `Bearer ${accessToken}`);
+
 	const response = await fetch(`${API_URL}/enrolments`, {
 		...options,
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			...options.headers
-		},
+		headers,
 		body: JSON.stringify(data)
 	});
 
