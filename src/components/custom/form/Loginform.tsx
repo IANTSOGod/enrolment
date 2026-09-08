@@ -4,14 +4,35 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Separator } from "../../ui/separator";
+import { login } from "../../../lib/api/auth.api";
 
 export default function Loginform() {
   const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  const handlesubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handlesubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    navigate("/admin/dashboard");
+    setError("");
+    setIsSubmitting(true);
+    try {
+      const response = await login({ username, password });
+      
+      localStorage.setItem("accessToken", response.access_token);
+
+      if (response.refresh_token) {
+        localStorage.setItem("refreshToken", response.refresh_token);
+      }
+
+      navigate("/admin/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Échec de la connexion");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -29,8 +50,11 @@ export default function Loginform() {
       <form onSubmit={handlesubmit} className="space-y-3">
         <Input
           type="text"
-          placeholder="Agent ID"
+          placeholder="Username"
           className="h-9 rounded-none border-slate-400 text-xs"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
         />
 
         <div className="relative">
@@ -38,6 +62,9 @@ export default function Loginform() {
             type={showPassword ? "text" : "password"}
             placeholder="Passcode"
             className="h-9 rounded-none border-slate-400 pr-10 text-xs"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
           />
 
           <button
@@ -62,11 +89,14 @@ export default function Loginform() {
           </p>
         </div>
 
+        {error && <p className="text-xs text-red-600">{error}</p>}
+
         <Button
           type="submit"
           className="h-9 w-full rounded-md bg-primary text-xs hover:bg-[#151b65] text-secondary"
+          disabled={isSubmitting}
         >
-          Login to System
+          {isSubmitting ? "Connexion..." : "Login to System"}
           <ArrowRight className="ml-1 h-3.5 w-3.5" />
         </Button>
       </form>
@@ -106,7 +136,7 @@ export default function Loginform() {
           type="button"
           className="text-[9px] font-medium text-primary hover:underline"
         >
-          Forgot Agent ID or Passcode?
+          Forgot Username or Passcode?
         </button>
       </div>
     </div>

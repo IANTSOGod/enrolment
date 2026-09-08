@@ -3,6 +3,8 @@ import DocumentStepper from "../../../components/custom/steppermanagement/Docume
 import VerificationHeader from "../../../components/custom/VerificationHeader";
 import DocumentVerificationCIN from "../../Documentdetails/DocumentVerificationCIN";
 import DocumentVerificationStep2 from "../../Documentdetails/DocumentVerificationStep2";
+import DocumentSupp from "../../Documentdetails/DocumentSupp";
+import Consentement from "../../Documentdetails/Consentement";
 
 export default function EnrolmentDetails({
   setlv1step,
@@ -37,7 +39,35 @@ export default function EnrolmentDetails({
         )}
         {stepLv2 == 2 && (
           <div className="w-full">
-          <DocumentVerificationStep2></DocumentVerificationStep2>
+            <DocumentVerificationStep2
+              onValidatePhoto={() => {
+                setstepLv2(3);
+              }}
+            />
+          </div>
+        )}
+        {stepLv2 == 3 && (
+          <div className="w-full">
+            <DocumentSupp
+              onBack={() => {
+                setstepLv2(2);
+              }}
+              onContinue={() => {
+                setstepLv2(4);
+              }}
+            />
+          </div>
+        )}
+        {stepLv2 == 4 && (
+          <div className="w-full">
+            <Consentement
+              onBack={() => {
+                setstepLv2(3);
+              }}
+              onContinue={() => {
+                setlv1step(1);
+              }}
+            />
           </div>
         )}
       </div>

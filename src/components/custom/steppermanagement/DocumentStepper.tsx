@@ -4,7 +4,7 @@ type Step = {
   id: number;
 };
 
-const steps: Step[] = [{ id: 1 }, { id: 2 }, { id: 3 }];
+const steps: Step[] = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }];
 
 export default function DocumentStepper({
   currentStep,

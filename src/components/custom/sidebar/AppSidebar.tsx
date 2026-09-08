@@ -24,6 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useSidebar } from "../../ui/sidebar";
 import * as React from "react";
+import { logout } from "../../../lib/api/auth.api";
 
 const mainItems = [
   {
@@ -60,6 +61,20 @@ export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { setOpenMobile, isMobile } = useSidebar();
+
+  const handleLogout = async () => {
+    const refreshToken = localStorage.getItem("refresh_token");
+
+    try {
+      if (refreshToken) {
+        await logout(refreshToken);
+      }
+    } finally {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      navigate("/");
+    }
+  };
 
   React.useEffect(() => {
     if (isMobile) {
@@ -186,9 +201,7 @@ export function AppSidebar() {
                 text-gray-600
                 hover:text-gray-700
               "
-              onClick={() => {
-                navigate("/");
-              }}
+              onClick={handleLogout}
             >
               <LogOut className="h-4 w-4 shrink-0" strokeWidth={1.8} />
 

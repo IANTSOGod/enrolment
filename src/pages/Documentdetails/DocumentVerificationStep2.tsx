@@ -1,7 +1,114 @@
+import { useEffect, useRef, useState } from "react";
 import { Camera, ScanFace, ShieldCheck, Sun, UserRound } from "lucide-react";
 import QualityRow from "../../components/custom/QualityRow";
 
-export default function DocumentVerificationStep2() {
+export interface PhotoCapture {
+  image: string;
+  embedding: number[];
+}
+
+interface DocumentVerificationStep2Props {
+  onValidatePhoto: (capture: PhotoCapture) => void;
+}
+
+export default function DocumentVerificationStep2({
+  onValidatePhoto,
+}: DocumentVerificationStep2Props) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [photo, setPhoto] = useState<string | null>(null);
+  const [embedding, setEmbedding] = useState<number[] | null>(null);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [isCapturing, setIsCapturing] = useState(false);
+
+  const startCamera = async () => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCameraError("La caméra n'est pas disponible dans ce navigateur.");
+      return;
+    }
+
+    try {
+      setCameraError(null);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 960 } },
+        audio: false,
+      });
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+    } catch {
+      setCameraError("Accès à la caméra refusé ou indisponible.");
+    }
+  };
+
+  useEffect(() => {
+    void startCamera();
+    return () => streamRef.current?.getTracks().forEach((track) => track.stop());
+  }, []);
+
+  const createImageEmbedding = (context: CanvasRenderingContext2D) => {
+    const pixels = context.getImageData(0, 0, 16, 16).data;
+    const vector: number[] = [];
+
+    for (let index = 0; index < pixels.length; index += 4) {
+      const grayscale =
+        (0.299 * pixels[index] + 0.587 * pixels[index + 1] + 0.114 * pixels[index + 2]) /
+        255;
+      vector.push(Number(grayscale.toFixed(6)));
+    }
+
+    return vector;
+  };
+
+  const capturePhoto = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+      setCameraError("La caméra n'est pas encore prête.");
+      return;
+    }
+
+    setIsCapturing(true);
+    canvas.width = 720;
+    canvas.height = 960;
+    const context = canvas.getContext("2d");
+    if (!context) {
+      setIsCapturing(false);
+      setCameraError("Impossible de capturer l'image.");
+      return;
+    }
+
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const image = canvas.toDataURL("image/jpeg", 0.9);
+    const embeddingCanvas = document.createElement("canvas");
+    embeddingCanvas.width = 16;
+    embeddingCanvas.height = 16;
+    const embeddingContext = embeddingCanvas.getContext("2d");
+    if (!embeddingContext) {
+      setIsCapturing(false);
+      setCameraError("Impossible de générer le vecteur image.");
+      return;
+    }
+
+    embeddingContext.drawImage(canvas, 0, 0, 16, 16);
+    setPhoto(image);
+    setEmbedding(createImageEmbedding(embeddingContext));
+    setIsCapturing(false);
+  };
+
+  const retakePhoto = () => {
+    setPhoto(null);
+    setEmbedding(null);
+    void startCamera();
+  };
+
+  const validatePhoto = () => {
+    if (photo && embedding) onValidatePhoto({ image: photo, embedding });
+  };
   return (
     <div className="w-full max-w-full ">
       {/* Titre */}
@@ -31,11 +138,18 @@ export default function DocumentVerificationStep2() {
               bg-gray-500
             "
           >
-            <img
-              src="/images/photo-capture.jpg"
-              alt="Capture biométrique"
-              className="h-full w-full object-cover"
-            />
+            {photo ? (
+              <img src={photo} alt="Photo capturée" className="h-full w-full object-cover" />
+            ) : (
+              <video
+                ref={videoRef}
+                muted
+                playsInline
+                className="h-full w-full object-cover"
+                aria-label="Aperçu de la caméra"
+              />
+            )}
+            <canvas ref={canvasRef} className="hidden" />
 
             {/* Cercle / zone visage */}
             <div
@@ -85,6 +199,8 @@ export default function DocumentVerificationStep2() {
             {/* Bouton caméra */}
             <button
               type="button"
+              onClick={capturePhoto}
+              disabled={isCapturing || Boolean(photo)}
               className="
                 absolute
                 bottom-2.25
@@ -103,6 +219,8 @@ export default function DocumentVerificationStep2() {
                 shadow-md
                 transition
                 hover:bg-[#0b4378]
+                disabled:cursor-not-allowed
+                disabled:opacity-50
               "
             >
               <Camera size={19} strokeWidth={2.2} />
@@ -131,8 +249,8 @@ export default function DocumentVerificationStep2() {
             {/* Image */}
             <div className="overflow-hidden rounded-xs border border-gray-200">
               <img
-                src="/images/photo-capture.jpg"
-                alt="Dernière capture"
+                src={photo ?? "/images/photo-capture.jpg"}
+                alt={photo ? "Photo capturée" : "Aucune capture"}
                 className="h-33 w-full object-cover"
               />
             </div>
@@ -141,6 +259,7 @@ export default function DocumentVerificationStep2() {
             <div className="mt-2.25 space-y-1.25">
               <button
                 type="button"
+                onClick={retakePhoto}
                 className="
                   h-6.75
                   w-full
@@ -160,6 +279,8 @@ export default function DocumentVerificationStep2() {
 
               <button
                 type="button"
+                disabled={!photo || !embedding}
+                onClick={validatePhoto}
                 className="
                   h-6.75
                   w-full
@@ -170,11 +291,16 @@ export default function DocumentVerificationStep2() {
                   text-white
                   transition
                   hover:bg-[#083b6d]
+                  disabled:cursor-not-allowed
+                  disabled:opacity-50
                 "
               >
                 Valider la photo
               </button>
             </div>
+            {cameraError && (
+              <p className="mt-2 text-[9px] text-red-600">{cameraError}</p>
+            )}
           </div>
 
           {/* Contrôles qualité */}
