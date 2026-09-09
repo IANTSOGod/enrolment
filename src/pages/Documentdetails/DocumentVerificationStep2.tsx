@@ -46,6 +46,7 @@ export default function DocumentVerificationStep2({
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void startCamera();
     return () => streamRef.current?.getTracks().forEach((track) => track.stop());
   }, []);
