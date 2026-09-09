@@ -1,6 +1,8 @@
 import { ArrowRight, Eye, EyeOff, Fingerprint, IdCard } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Separator } from "../../ui/separator";
@@ -10,17 +12,13 @@ export default function Loginform() {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const navigate = useNavigate();
 
-  const handlesubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-    setIsSubmitting(true);
-    try {
-      const response = await login({ username, password });
-      
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: login,
+
+    onSuccess: (response) => {
       localStorage.setItem("accessToken", response.access_token);
 
       if (response.refresh_token) {
@@ -28,11 +26,16 @@ export default function Loginform() {
       }
 
       navigate("/admin/dashboard");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Échec de la connexion");
-    } finally {
-      setIsSubmitting(false);
-    }
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    mutate({
+      username,
+      password,
+    });
   };
 
   return (
@@ -47,7 +50,7 @@ export default function Loginform() {
         </p>
       </div>
 
-      <form onSubmit={handlesubmit} className="space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-3">
         <Input
           type="text"
           placeholder="Username"
@@ -69,7 +72,7 @@ export default function Loginform() {
 
           <button
             type="button"
-            onClick={() => setShowPassword(!showPassword)}
+            onClick={() => setShowPassword((prev) => !prev)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-800"
           >
             {showPassword ? (
@@ -89,14 +92,19 @@ export default function Loginform() {
           </p>
         </div>
 
-        {error && <p className="text-xs text-red-600">{error}</p>}
+        {isError && (
+          <p className="text-xs text-red-600">
+            {error instanceof Error ? error.message : "Échec de la connexion"}
+          </p>
+        )}
 
         <Button
           type="submit"
           className="h-9 w-full rounded-md bg-primary text-xs hover:bg-[#151b65] text-secondary"
-          disabled={isSubmitting}
+          disabled={isPending}
         >
-          {isSubmitting ? "Connexion..." : "Login to System"}
+          {isPending ? "Connexion..." : "Login to System"}
+
           <ArrowRight className="ml-1 h-3.5 w-3.5" />
         </Button>
       </form>
