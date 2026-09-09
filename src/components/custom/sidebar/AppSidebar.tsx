@@ -24,7 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useSidebar } from "../../ui/sidebar";
 import * as React from "react";
-import { logout } from "../../../lib/api/auth.api";
+import { logout } from "../../../services/auth.api";
 
 const mainItems = [
   {

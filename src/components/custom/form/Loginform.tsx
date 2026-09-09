@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Separator } from "../../ui/separator";
-import { login } from "../../../lib/api/auth.api";
+import { login } from "../../../services/auth.api";
 
 export default function Loginform() {
   const [showPassword, setShowPassword] = useState(false);

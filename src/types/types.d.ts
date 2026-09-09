@@ -69,3 +69,108 @@ interface Dashboardinterface {
   stats: StatOverview;
   recentActivity: ActivityRow[];
 }
+
+interface LoginCredentials {
+  username: string;
+  password: string;
+}
+
+interface LoginResponse {
+  access_token: string;
+  refresh_token?: string;
+  agent?: {
+    id: string;
+    username: string;
+    roleId: string;
+    centreId: string;
+  };
+}
+
+interface Country {
+  id: string;
+  iso2_code: string;
+  iso3_code: string;
+  name: string;
+  nationality_name: string;
+  created_at: string;
+  updated_at: string | null;
+}
+
+interface Region {
+  id: string;
+  country_id: string;
+  name: string;
+  created_at: string;
+  updated_at: string | null;
+}
+
+interface District {
+  id: string;
+  region_id: string;
+  name: string;
+  created_at: string;
+  updated_at: string | null;
+}
+
+interface Commune {
+  id: string;
+  district_id: string;
+  name: string;
+  created_at: string;
+  updated_at: string | null;
+}
+
+interface Fokotany {
+  id: string;
+  commune_id: string;
+  name: string;
+  created_at: string;
+  updated_at: string | null;
+}
+
+interface OccupancyType {
+  value: string;
+  label: string;
+}
+
+interface EnrolmentPayload {
+  person: {
+    first_name: string;
+    last_name: string;
+    date_of_birth: string;
+    birth_place: string;
+    country_of_birth_id: string;
+    sex: string;
+  };
+  address: {
+    house_number: string;
+    fokontany_id: string;
+    occupancy_type: string;
+  };
+  contacts: Array<{
+    type: string;
+    value: string;
+    is_primary: boolean;
+    is_verified: boolean;
+  }>;
+  relationships: Array<{
+    related_person_id: string;
+    related_person_name: string;
+    relationship_type: string;
+  }>;
+  documents: Array<{
+    document_type_id: string;
+    front_file_path: string;
+    back_file_path: string;
+  }>;
+  face_biometrics: Array<{
+    image_file_path: string;
+    model_name: string;
+    model_version: string;
+    embeding: string;
+    quality_score: number;
+    face_detected: boolean;
+  }>;
+  created_offline: boolean;
+  enrolment_type: string;
+}

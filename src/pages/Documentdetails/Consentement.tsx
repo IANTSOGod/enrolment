@@ -2,9 +2,9 @@ import { useEffect, useRef, useState, type PointerEvent } from "react";
 import NavigationLv1stepper from "../../components/custom/steppermanagement/NavigationLv1stepper";
 import {
   createEnrolment,
-  mockEnrolmentPayload,
   validateEnrolmentPayload,
-} from "../../lib/api/enrolement.api";
+} from "../../services/enrolement.api";
+import { mockEnrolmentPayload } from "../../lib/mock";
 
 interface ConsentementProps {
   onBack: () => void;

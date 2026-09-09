@@ -1,10 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import {
-  ChevronDown,
-  Info,
-  Map,
-  MapPin,
-} from "lucide-react";
+import { ChevronDown, Info, Map, MapPin } from "lucide-react";
 import NavigationLv1stepper from "../../components/custom/steppermanagement/NavigationLv1stepper";
 import {
   getCommunes,
@@ -13,13 +8,7 @@ import {
   getFokotany,
   getOccupancyTypes,
   getRegions,
-  type Commune,
-  type Country,
-  type District,
-  type Fokotany,
-  type OccupancyType,
-  type Region,
-} from "../../lib/api/dataSupp.api";
+} from "../../services/dataSupp.api";
 
 interface SelectFieldProps {
   label: string;
@@ -61,9 +50,9 @@ function SelectField({
             const optionLabel = "label" in option ? option.label : option.name;
 
             return (
-            <option key={optionValue} value={optionValue}>
-              {optionLabel}
-            </option>
+              <option key={optionValue} value={optionValue}>
+                {optionLabel}
+              </option>
             );
           })}
         </select>
@@ -98,7 +87,9 @@ function SessionMetadataPanel({ metadata }: { metadata: SessionMetadata }) {
     <aside className="h-fit rounded-[5px] border border-gray-200 bg-white p-3">
       <div className="mb-2.5 flex items-center gap-1.5 border-b border-gray-100 pb-2">
         <Info className="h-3.5 w-3.5 text-[#173d68]" />
-        <h2 className="text-[12px] font-semibold text-[#092b50]">Session Metadata</h2>
+        <h2 className="text-[12px] font-semibold text-[#092b50]">
+          Session Metadata
+        </h2>
       </div>
 
       <div className="flex flex-col gap-2.5 text-[9px]">
@@ -128,7 +119,10 @@ interface DocumentSuppProps {
   onContinue: () => void;
 }
 
-export default function DocumentSupp({ onBack, onContinue }: DocumentSuppProps) {
+export default function DocumentSupp({
+  onBack,
+  onContinue,
+}: DocumentSuppProps) {
   const [countries, setCountries] = useState<Country[]>([]);
   const [regions, setRegions] = useState<Region[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
@@ -166,7 +160,8 @@ export default function DocumentSupp({ onBack, onContinue }: DocumentSuppProps) 
         if (active) setError("Impossible de charger les statuts de résidence.");
       })
       .finally(() => {
-        if (active) setLoading((current) => ({ ...current, occupancyTypes: false }));
+        if (active)
+          setLoading((current) => ({ ...current, occupancyTypes: false }));
       });
 
     return () => {
@@ -354,7 +349,10 @@ export default function DocumentSupp({ onBack, onContinue }: DocumentSuppProps) 
 
       <div className="flex flex-col items-start gap-5 xl:flex-row">
         <div className="flex min-w-0 w-full flex-1 flex-col gap-2.5">
-          <SectionCard icon={<Map className="h-3.5 w-3.5" />} title="Données territoriales">
+          <SectionCard
+            icon={<Map className="h-3.5 w-3.5" />}
+            title="Données territoriales"
+          >
             <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
               <SelectField
                 label="Pays"
@@ -400,7 +398,10 @@ export default function DocumentSupp({ onBack, onContinue }: DocumentSuppProps) 
             </div>
           </SectionCard>
 
-          <SectionCard icon={<MapPin className="h-3.5 w-3.5" />} title="Données de résidence">
+          <SectionCard
+            icon={<MapPin className="h-3.5 w-3.5" />}
+            title="Données de résidence"
+          >
             <div className="flex flex-col gap-2.5">
               <SelectField
                 label="Statut"
@@ -410,7 +411,9 @@ export default function DocumentSupp({ onBack, onContinue }: DocumentSuppProps) 
                 loading={loading.occupancyTypes}
               />
               <label className="flex flex-col gap-1">
-                <span className="text-[10px] font-semibold text-[#092b50]">Adresse complète</span>
+                <span className="text-[10px] font-semibold text-[#092b50]">
+                  Adresse complète
+                </span>
                 <textarea
                   className="min-h-25 w-full resize-y rounded-xs border border-gray-200 bg-white px-2.5 py-2 text-[10px] text-gray-600 outline-none transition placeholder:text-gray-400 focus:border-[#173d68] focus:ring-1 focus:ring-[#173d68]/20"
                   placeholder="Lot IV B 23 Alarobia, Antananarivo"
@@ -432,7 +435,9 @@ export default function DocumentSupp({ onBack, onContinue }: DocumentSuppProps) 
           onBack={onBack}
           onContinue={onContinue}
           isfinal={true}
-          disabled={!pays || !region || !district || !commune || !fokontany || !statut}
+          disabled={
+            !pays || !region || !district || !commune || !fokontany || !statut
+          }
         />
       </div>
     </div>
