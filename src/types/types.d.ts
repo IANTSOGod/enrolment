@@ -204,3 +204,7 @@ interface PhotoCapture {
 interface DocumentVerificationStep2Props {
   onValidatePhoto: (capture: PhotoCapture) => void;
 }
+interface ConsentementProps {
+  onBack: () => void;
+  onContinue: () => void;
+}

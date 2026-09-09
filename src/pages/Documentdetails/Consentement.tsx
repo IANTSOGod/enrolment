@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { useMutation } from "@tanstack/react-query";
 import NavigationLv1stepper from "../../components/custom/steppermanagement/NavigationLv1stepper";
 import {
   createEnrolment,
@@ -6,20 +7,14 @@ import {
 } from "../../services/enrolement.api";
 import { mockEnrolmentPayload } from "../../lib/mock";
 
-interface ConsentementProps {
-  onBack: () => void;
-  onContinue: () => void;
-}
-
 export default function Consentement({ onBack, onContinue }: ConsentementProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drawingRef = useRef(false);
   const [truthAccepted, setTruthAccepted] = useState(false);
   const [biometricAccepted, setBiometricAccepted] = useState(false);
   const [hasSignature, setHasSignature] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState("");
 
+  // Effet DOM (init canvas) — reste un useEffect, ce n'est pas du fetching
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -84,30 +79,25 @@ export default function Consentement({ onBack, onContinue }: ConsentementProps) 
 
   const isComplete = truthAccepted && biometricAccepted && hasSignature;
 
-  const handleSubmit = async () => {
-    if (!isComplete || isSubmitting) return;
-
-    setSubmitError("");
-    const validationErrors = validateEnrolmentPayload(mockEnrolmentPayload);
-    if (validationErrors.length > 0) {
-      setSubmitError(validationErrors.join(" "));
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-      await createEnrolment(mockEnrolmentPayload);
+  const enrolmentMutation = useMutation({
+    mutationFn: async () => {
+      const validationErrors = validateEnrolmentPayload(mockEnrolmentPayload);
+      if (validationErrors.length > 0) {
+        throw new Error(validationErrors.join(" "));
+      }
+      return createEnrolment(mockEnrolmentPayload);
+    },
+    onSuccess: () => {
       onContinue();
-    } catch (error) {
-      setSubmitError(
-        error instanceof Error
-          ? error.message
-          : "La validation de l'enrôlement a échoué.",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    },
+  });
+
+  const submitError =
+    enrolmentMutation.error instanceof Error
+      ? enrolmentMutation.error.message
+      : enrolmentMutation.isError
+        ? "La validation de l'enrôlement a échoué."
+        : "";
 
   return (
     <div className="w-full max-w-full">
@@ -203,11 +193,11 @@ export default function Consentement({ onBack, onContinue }: ConsentementProps) 
       <div className="mt-5 border-t border-[#d5d7e2] pt-4">
         <NavigationLv1stepper
           onBack={onBack}
-          onContinue={handleSubmit}
+          onContinue={() => enrolmentMutation.mutate()}
           isfinal={true}
-          disabled={!isComplete || isSubmitting}
+          disabled={!isComplete || enrolmentMutation.isPending}
         />
-        {isSubmitting && (
+        {enrolmentMutation.isPending && (
           <p className="mt-2 text-right text-[10px] text-[#52525b]">
             Validation de l'enrôlement...
           </p>
