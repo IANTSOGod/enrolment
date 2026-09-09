@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Map, MapPin } from "lucide-react";
 import NavigationLv1stepper from "../../components/custom/steppermanagement/NavigationLv1stepper";
 import {
@@ -18,205 +19,87 @@ export default function DocumentSupp({
   onBack,
   onContinue,
 }: DocumentSuppProps) {
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [regions, setRegions] = useState<Region[]>([]);
-  const [districts, setDistricts] = useState<District[]>([]);
-  const [communes, setCommunes] = useState<Commune[]>([]);
-  const [fokotany, setFokotany] = useState<Fokotany[]>([]);
-  const [occupancyTypes, setOccupancyTypes] = useState<OccupancyType[]>([]);
-  const [pays, setPays] = useState("");
-  const [region, setRegion] = useState("");
-  const [district, setDistrict] = useState("");
-  const [commune, setCommune] = useState("");
-  const [fokontany, setFokontany] = useState("");
-  const [statut, setStatut] = useState("");
+  // Sélections explicites de l'utilisateur (vide = "pas encore choisi, prendre le défaut")
+  const [paysSel, setPaysSel] = useState("");
+  const [regionSel, setRegionSel] = useState("");
+  const [districtSel, setDistrictSel] = useState("");
+  const [communeSel, setCommuneSel] = useState("");
+  const [fokontanySel, setFokontanySel] = useState("");
+  const [statutSel, setStatutSel] = useState("");
   const [adresse, setAdresse] = useState("");
-  const [loading, setLoading] = useState({
-    countries: false,
-    regions: false,
-    districts: false,
-    communes: false,
-    fokotany: false,
-    occupancyTypes: false,
+
+  const countriesQuery = useQuery({
+    queryKey: ["countries"],
+    queryFn: getCountrie,
   });
-  const [error, setError] = useState("");
+  const pays = paysSel || countriesQuery.data?.[0]?.id || "";
 
-  useEffect(() => {
-    let active = true;
+  const regionsQuery = useQuery({
+    queryKey: ["regions", pays],
+    queryFn: () => getRegions(pays),
+    enabled: !!pays,
+  });
+  const region = regionSel || regionsQuery.data?.[0]?.id || "";
 
-    setLoading((current) => ({ ...current, occupancyTypes: true }));
-    getOccupancyTypes()
-      .then((data) => {
-        if (!active) return;
-        setOccupancyTypes(data);
-        setStatut(data[0]?.value ?? "");
-      })
-      .catch(() => {
-        if (active) setError("Impossible de charger les statuts de résidence.");
-      })
-      .finally(() => {
-        if (active)
-          setLoading((current) => ({ ...current, occupancyTypes: false }));
-      });
+  const districtsQuery = useQuery({
+    queryKey: ["districts", region],
+    queryFn: () => getDistrict(region),
+    enabled: !!region,
+  });
+  const district = districtSel || districtsQuery.data?.[0]?.id || "";
 
-    return () => {
-      active = false;
-    };
-  }, []);
+  const communesQuery = useQuery({
+    queryKey: ["communes", district],
+    queryFn: () => getCommunes(district),
+    enabled: !!district,
+  });
+  const commune = communeSel || communesQuery.data?.[0]?.id || "";
 
-  useEffect(() => {
-    let active = true;
+  const fokotanyQuery = useQuery({
+    queryKey: ["fokotany", commune],
+    queryFn: () => getFokotany(commune),
+    enabled: !!commune,
+  });
+  const fokontany = fokontanySel || fokotanyQuery.data?.[0]?.id || "";
 
-    setLoading((current) => ({ ...current, countries: true }));
-    getCountrie()
-      .then((data) => {
-        if (!active) return;
-        setCountries(data);
-        setPays(data[0]?.id ?? "");
-      })
-      .catch(() => {
-        if (active) setError("Impossible de charger les pays.");
-      })
-      .finally(() => {
-        if (active) setLoading((current) => ({ ...current, countries: false }));
-      });
+  const occupancyTypesQuery = useQuery({
+    queryKey: ["occupancyTypes"],
+    queryFn: getOccupancyTypes,
+  });
+  const statut = statutSel || occupancyTypesQuery.data?.[0]?.value || "";
 
-    return () => {
-      active = false;
-    };
-  }, []);
+  const handlePaysChange = (value: string) => {
+    setPaysSel(value);
+    setRegionSel("");
+    setDistrictSel("");
+    setCommuneSel("");
+    setFokontanySel("");
+  };
+  const handleRegionChange = (value: string) => {
+    setRegionSel(value);
+    setDistrictSel("");
+    setCommuneSel("");
+    setFokontanySel("");
+  };
+  const handleDistrictChange = (value: string) => {
+    setDistrictSel(value);
+    setCommuneSel("");
+    setFokontanySel("");
+  };
+  const handleCommuneChange = (value: string) => {
+    setCommuneSel(value);
+    setFokontanySel("");
+  };
 
-  useEffect(() => {
-    if (!pays) {
-      setRegions([]);
-      setRegion("");
-      return;
-    }
-
-    let active = true;
-    setRegions([]);
-    setRegion("");
-    setDistricts([]);
-    setDistrict("");
-    setCommunes([]);
-    setCommune("");
-    setFokotany([]);
-    setFokontany("");
-    setLoading((current) => ({ ...current, regions: true }));
-
-    getRegions(pays)
-      .then((data) => {
-        if (!active) return;
-        setRegions(data);
-        setRegion(data[0]?.id ?? "");
-      })
-      .catch(() => {
-        if (active) setError("Impossible de charger les régions.");
-      })
-      .finally(() => {
-        if (active) setLoading((current) => ({ ...current, regions: false }));
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [pays]);
-
-  useEffect(() => {
-    if (!region) {
-      setDistricts([]);
-      setDistrict("");
-      return;
-    }
-
-    let active = true;
-    setDistricts([]);
-    setDistrict("");
-    setCommunes([]);
-    setCommune("");
-    setFokotany([]);
-    setFokontany("");
-    setLoading((current) => ({ ...current, districts: true }));
-
-    getDistrict(region)
-      .then((data) => {
-        if (!active) return;
-        setDistricts(data);
-        setDistrict(data[0]?.id ?? "");
-      })
-      .catch(() => {
-        if (active) setError("Impossible de charger les districts.");
-      })
-      .finally(() => {
-        if (active) setLoading((current) => ({ ...current, districts: false }));
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [region]);
-
-  useEffect(() => {
-    if (!district) {
-      setCommunes([]);
-      setCommune("");
-      return;
-    }
-
-    let active = true;
-    setCommunes([]);
-    setCommune("");
-    setFokotany([]);
-    setFokontany("");
-    setLoading((current) => ({ ...current, communes: true }));
-
-    getCommunes(district)
-      .then((data) => {
-        if (!active) return;
-        setCommunes(data);
-        setCommune(data[0]?.id ?? "");
-      })
-      .catch(() => {
-        if (active) setError("Impossible de charger les communes.");
-      })
-      .finally(() => {
-        if (active) setLoading((current) => ({ ...current, communes: false }));
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [district]);
-
-  useEffect(() => {
-    if (!commune) {
-      setFokotany([]);
-      setFokontany("");
-      return;
-    }
-
-    let active = true;
-    setFokotany([]);
-    setFokontany("");
-    setLoading((current) => ({ ...current, fokotany: true }));
-
-    getFokotany(commune)
-      .then((data) => {
-        if (!active) return;
-        setFokotany(data);
-        setFokontany(data[0]?.id ?? "");
-      })
-      .catch(() => {
-        if (active) setError("Impossible de charger les fokontany.");
-      })
-      .finally(() => {
-        if (active) setLoading((current) => ({ ...current, fokotany: false }));
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [commune]);
+  const error =
+    (countriesQuery.isError && "Impossible de charger les pays.") ||
+    (regionsQuery.isError && "Impossible de charger les régions.") ||
+    (districtsQuery.isError && "Impossible de charger les districts.") ||
+    (communesQuery.isError && "Impossible de charger les communes.") ||
+    (fokotanyQuery.isError && "Impossible de charger les fokontany.") ||
+    (occupancyTypesQuery.isError &&
+      "Impossible de charger les statuts de résidence.") ||
+    "";
 
   return (
     <div className="w-full max-w-full">
@@ -245,42 +128,42 @@ export default function DocumentSupp({
               <SelectField
                 label="Pays"
                 value={pays}
-                options={countries}
-                onChange={setPays}
-                loading={loading.countries}
+                options={countriesQuery.data ?? []}
+                onChange={handlePaysChange}
+                loading={countriesQuery.isLoading}
               />
               <SelectField
                 label="Région"
                 value={region}
-                options={regions}
-                onChange={setRegion}
+                options={regionsQuery.data ?? []}
+                onChange={handleRegionChange}
                 disabled={!pays}
-                loading={loading.regions}
+                loading={regionsQuery.isLoading}
               />
               <SelectField
                 label="District"
                 value={district}
-                options={districts}
-                onChange={setDistrict}
+                options={districtsQuery.data ?? []}
+                onChange={handleDistrictChange}
                 disabled={!region}
-                loading={loading.districts}
+                loading={districtsQuery.isLoading}
               />
               <SelectField
                 label="Commune"
                 value={commune}
-                options={communes}
-                onChange={setCommune}
+                options={communesQuery.data ?? []}
+                onChange={handleCommuneChange}
                 disabled={!district}
-                loading={loading.communes}
+                loading={communesQuery.isLoading}
               />
               <div className="sm:col-span-2">
                 <SelectField
                   label="Fokontany"
                   value={fokontany}
-                  options={fokotany}
-                  onChange={setFokontany}
+                  options={fokotanyQuery.data ?? []}
+                  onChange={setFokontanySel}
                   disabled={!commune}
-                  loading={loading.fokotany}
+                  loading={fokotanyQuery.isLoading}
                 />
               </div>
             </div>
@@ -294,9 +177,9 @@ export default function DocumentSupp({
               <SelectField
                 label="Statut"
                 value={statut}
-                options={occupancyTypes}
-                onChange={setStatut}
-                loading={loading.occupancyTypes}
+                options={occupancyTypesQuery.data ?? []}
+                onChange={setStatutSel}
+                loading={occupancyTypesQuery.isLoading}
               />
               <label className="flex flex-col gap-1">
                 <span className="text-[10px] font-semibold text-[#092b50]">
