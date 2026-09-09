@@ -1,5 +1,5 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { ChevronDown, Info, Map, MapPin } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Map, MapPin } from "lucide-react";
 import NavigationLv1stepper from "../../components/custom/steppermanagement/NavigationLv1stepper";
 import {
   getCommunes,
@@ -9,115 +9,10 @@ import {
   getOccupancyTypes,
   getRegions,
 } from "../../services/dataSupp.api";
-
-interface SelectFieldProps {
-  label: string;
-  value: string;
-  options: Array<{ id: string; name: string }> | OccupancyType[];
-  onChange: (value: string) => void;
-  disabled?: boolean;
-  loading?: boolean;
-}
-
-interface SessionMetadata {
-  agentName: string;
-  agentId: string;
-  timestamp: string;
-  applicationId: string;
-}
-
-function SelectField({
-  label,
-  value,
-  options,
-  onChange,
-  disabled = false,
-  loading = false,
-}: SelectFieldProps) {
-  return (
-    <label className="flex min-w-0 flex-col gap-1">
-      <span className="text-[10px] font-semibold text-[#092b50]">{label}</span>
-      <span className="relative">
-        <select
-          className="h-8 w-full appearance-none rounded-xs border border-gray-200 bg-white px-2.5 pr-8 text-[10px] text-gray-600 outline-none transition focus:border-[#173d68] focus:ring-1 focus:ring-[#173d68]/20 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400"
-          value={value}
-          disabled={disabled || loading}
-          onChange={(event) => onChange(event.target.value)}
-        >
-          <option value="">{loading ? "Chargement..." : "Sélectionner"}</option>
-          {options.map((option) => {
-            const optionValue = "value" in option ? option.value : option.id;
-            const optionLabel = "label" in option ? option.label : option.name;
-
-            return (
-              <option key={optionValue} value={optionValue}>
-                {optionLabel}
-              </option>
-            );
-          })}
-        </select>
-        <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-gray-400" />
-      </span>
-    </label>
-  );
-}
-
-function SectionCard({
-  icon,
-  title,
-  children,
-}: {
-  icon: ReactNode;
-  title: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="rounded-[5px] border border-gray-200 bg-white p-3.5">
-      <div className="mb-2.5 flex items-center gap-1.5 border-b border-gray-100 pb-2">
-        <span className="text-[#173d68]">{icon}</span>
-        <h2 className="text-[12px] font-semibold text-[#092b50]">{title}</h2>
-      </div>
-      {children}
-    </section>
-  );
-}
-
-function SessionMetadataPanel({ metadata }: { metadata: SessionMetadata }) {
-  return (
-    <aside className="h-fit rounded-[5px] border border-gray-200 bg-white p-3">
-      <div className="mb-2.5 flex items-center gap-1.5 border-b border-gray-100 pb-2">
-        <Info className="h-3.5 w-3.5 text-[#173d68]" />
-        <h2 className="text-[12px] font-semibold text-[#092b50]">
-          Session Metadata
-        </h2>
-      </div>
-
-      <div className="flex flex-col gap-2.5 text-[9px]">
-        <div>
-          <p className="text-gray-400">Active Agent</p>
-          <p className="font-mono text-gray-600">
-            {metadata.agentName} ({metadata.agentId})
-          </p>
-        </div>
-        <div>
-          <p className="text-gray-400">Timestamp</p>
-          <p className="font-mono text-gray-600">{metadata.timestamp}</p>
-        </div>
-        <div>
-          <p className="text-gray-400">Application ID</p>
-          <span className="mt-1 inline-block rounded-xs bg-blue-50 px-1.5 py-0.5 font-mono text-[8px] text-[#173d68]">
-            {metadata.applicationId}
-          </span>
-        </div>
-      </div>
-    </aside>
-  );
-}
-
-interface DocumentSuppProps {
-  onBack: () => void;
-  onContinue: () => void;
-}
+import SelectField from "../../components/custom/SelectField";
+import SectionCard from "../../components/custom/SectionCard";
+import SessionMetadataPanel from "../../components/custom/Sessionmetadata";
+import { sessionMetadata } from "../../lib/mock";
 
 export default function DocumentSupp({
   onBack,
@@ -322,13 +217,6 @@ export default function DocumentSupp({
       active = false;
     };
   }, [commune]);
-
-  const sessionMetadata: SessionMetadata = {
-    agentName: "J. Doe",
-    agentId: "8829",
-    timestamp: "2026-03-12 14:45",
-    applicationId: "ENR-2026-992103",
-  };
 
   return (
     <div className="w-full max-w-full">

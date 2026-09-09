@@ -95,3 +95,10 @@ export const mockEnrolmentPayload: EnrolmentPayload = {
 	created_offline: false,
 	enrolment_type: 'NEW'
 }
+
+export const sessionMetadata: SessionMetadata = {
+  agentName: "J. Doe",
+  agentId: "8829",
+  timestamp: "2026-03-12 14:45",
+  applicationId: "ENR-2026-992103",
+};

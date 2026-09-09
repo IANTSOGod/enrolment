@@ -174,3 +174,25 @@ interface EnrolmentPayload {
   created_offline: boolean;
   enrolment_type: string;
 }
+
+interface SelectFieldProps {
+  label: string;
+  value: string;
+  options: Array<{ id: string; name: string }> | OccupancyType[];
+  onChange: (value: string) => void;
+  disabled?: boolean;
+  loading?: boolean;
+}
+
+interface SessionMetadata {
+  agentName: string;
+  agentId: string;
+  timestamp: string;
+  applicationId: string;
+}
+
+
+interface DocumentSuppProps {
+  onBack: () => void;
+  onContinue: () => void;
+}
