@@ -1,15 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Camera, ScanFace, ShieldCheck, Sun, UserRound } from "lucide-react";
-import QualityRow from "../../components/custom/QualityRow";
-
-export interface PhotoCapture {
-  image: string;
-  embedding: number[];
-}
-
-interface DocumentVerificationStep2Props {
-  onValidatePhoto: (capture: PhotoCapture) => void;
-}
+import { Camera } from "lucide-react";
+import QualityControlCard from "../../components/custom/QualityControlCard";
 
 export default function DocumentVerificationStep2({
   onValidatePhoto,
@@ -31,7 +22,11 @@ export default function DocumentVerificationStep2({
     try {
       setCameraError(null);
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 960 } },
+        video: {
+          facingMode: "user",
+          width: { ideal: 720 },
+          height: { ideal: 960 },
+        },
         audio: false,
       });
       streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -48,7 +43,8 @@ export default function DocumentVerificationStep2({
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void startCamera();
-    return () => streamRef.current?.getTracks().forEach((track) => track.stop());
+    return () =>
+      streamRef.current?.getTracks().forEach((track) => track.stop());
   }, []);
 
   const createImageEmbedding = (context: CanvasRenderingContext2D) => {
@@ -57,7 +53,9 @@ export default function DocumentVerificationStep2({
 
     for (let index = 0; index < pixels.length; index += 4) {
       const grayscale =
-        (0.299 * pixels[index] + 0.587 * pixels[index + 1] + 0.114 * pixels[index + 2]) /
+        (0.299 * pixels[index] +
+          0.587 * pixels[index + 1] +
+          0.114 * pixels[index + 2]) /
         255;
       vector.push(Number(grayscale.toFixed(6)));
     }
@@ -68,7 +66,11 @@ export default function DocumentVerificationStep2({
   const capturePhoto = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
-    if (!video || !canvas || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+    if (
+      !video ||
+      !canvas ||
+      video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA
+    ) {
       setCameraError("La caméra n'est pas encore prête.");
       return;
     }
@@ -140,7 +142,11 @@ export default function DocumentVerificationStep2({
             "
           >
             {photo ? (
-              <img src={photo} alt="Photo capturée" className="h-full w-full object-cover" />
+              <img
+                src={photo}
+                alt="Photo capturée"
+                className="h-full w-full object-cover"
+              />
             ) : (
               <video
                 ref={videoRef}
@@ -304,50 +310,7 @@ export default function DocumentVerificationStep2({
             )}
           </div>
 
-          {/* Contrôles qualité */}
-          <div
-            className="
-              mt-2.5
-              rounded-[5px]
-              border
-              border-gray-200
-              bg-white
-              p-3
-            "
-          >
-            <h2 className="mb-2.5 text-[12px] font-semibold text-[#092b50]">
-              Contrôles de qualité
-            </h2>
-
-            <div className="space-y-2">
-              <QualityRow
-                icon={<Sun size={13} />}
-                label="Éclairage"
-                status="OK"
-                success
-              />
-
-              <QualityRow
-                icon={<ScanFace size={13} />}
-                label="Centrage"
-                status="À ajuster"
-              />
-
-              <QualityRow
-                icon={<UserRound size={13} />}
-                label="Expression neutre"
-                status="OK"
-                success
-              />
-
-              <QualityRow
-                icon={<ShieldCheck size={13} />}
-                label="Détection du vivant (PAD)"
-                status="Réussi"
-                success
-              />
-            </div>
-          </div>
+          <QualityControlCard></QualityControlCard>
         </div>
       </div>
     </div>

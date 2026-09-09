@@ -191,8 +191,16 @@ interface SessionMetadata {
   applicationId: string;
 }
 
-
 interface DocumentSuppProps {
   onBack: () => void;
   onContinue: () => void;
+}
+
+interface PhotoCapture {
+  image: string;
+  embedding: number[];
+}
+
+interface DocumentVerificationStep2Props {
+  onValidatePhoto: (capture: PhotoCapture) => void;
 }
