@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 
 import { AppSidebar } from "../components/custom/sidebar/AppSidebar";
 
-import { Dot, RefreshCw, User, Wifi } from "lucide-react";
+import { Dot, RefreshCw, User } from "lucide-react";
 import { Label } from "../components/ui/label";
 import {
   SidebarInset,
