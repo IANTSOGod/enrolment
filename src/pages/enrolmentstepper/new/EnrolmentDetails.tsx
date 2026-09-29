@@ -8,10 +8,29 @@ import Consentement from "../../Documentdetails/Consentement";
 
 export default function EnrolmentDetails({
   setlv1step,
-}: {
-  setlv1step: (step: number) => void;
-}) {
+  draft,
+  onDraftChange,
+}: EnrolmentDetailsProps) {
   const [stepLv2, setstepLv2] = useState<number>(1);
+
+  const updateIdentity = (key: string, value: string) => {
+    const identityKey = key === "nom"
+      ? "last_name"
+      : key === "prenom"
+        ? "first_name"
+      : key === "naissance"
+        ? "date_of_birth"
+        : key === "lieu"
+          ? "birth_place"
+          : key === "sexe"
+            ? "sex"
+          : null;
+    if (!identityKey) return;
+    onDraftChange((current) => ({
+      ...current,
+      identity: { ...current.identity, [identityKey]: value },
+    }));
+  };
 
   return (
     <div className="bg-[#f8f9fb]">
@@ -28,6 +47,18 @@ export default function EnrolmentDetails({
 
         {stepLv2 == 1 && (
           <DocumentVerificationCIN
+            identity={draft.identity}
+            documents={draft.documents}
+            onDocumentsChange={(documents) =>
+              onDraftChange((current) => ({ ...current, documents }))
+            }
+            onIdentityDetected={(identity) =>
+              onDraftChange((current) => ({
+                ...current,
+                identity: { ...current.identity, ...identity },
+              }))
+            }
+            onIdentityChange={updateIdentity}
             onBack={() => {
               setlv1step(1);
             }}
@@ -40,7 +71,12 @@ export default function EnrolmentDetails({
         {stepLv2 == 2 && (
           <div className="w-full">
             <DocumentVerificationStep2
-              onValidatePhoto={() => {
+              initialCapture={draft.faceCapture}
+              onCaptureChange={(faceCapture) =>
+                onDraftChange((current) => ({ ...current, faceCapture }))
+              }
+              onValidatePhoto={(faceCapture) => {
+                onDraftChange((current) => ({ ...current, faceCapture }));
                 setstepLv2(3);
               }}
             />
@@ -49,10 +85,15 @@ export default function EnrolmentDetails({
         {stepLv2 == 3 && (
           <div className="w-full">
             <DocumentSupp
+              address={draft.address}
+              onAddressChange={(address) =>
+                onDraftChange((current) => ({ ...current, address }))
+              }
               onBack={() => {
                 setstepLv2(2);
               }}
-              onContinue={() => {
+              onContinue={(address) => {
+                onDraftChange((current) => ({ ...current, address }));
                 setstepLv2(4);
               }}
             />
@@ -61,11 +102,16 @@ export default function EnrolmentDetails({
         {stepLv2 == 4 && (
           <div className="w-full">
             <Consentement
+              consent={draft.consent}
+              onConsentChange={(consent) =>
+                onDraftChange((current) => ({ ...current, consent }))
+              }
               onBack={() => {
                 setstepLv2(3);
               }}
-              onContinue={() => {
-                setlv1step(1);
+              onContinue={(consent) => {
+                onDraftChange((current) => ({ ...current, consent }));
+                setlv1step(3);
               }}
             />
           </div>

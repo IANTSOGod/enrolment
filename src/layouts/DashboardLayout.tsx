@@ -27,7 +27,7 @@ export default function DashboardLayout() {
                 <Dot className="text-3xl text-green-500"></Dot>
                 <Label className="mr-3 text-black">Syncing</Label>
               </div>
-              <Wifi></Wifi>
+              {/* <Wifi></Wifi> */}
               <RefreshCw></RefreshCw>
               <User></User>
             </div>

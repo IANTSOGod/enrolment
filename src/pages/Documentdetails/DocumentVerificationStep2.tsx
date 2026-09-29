@@ -1,17 +1,32 @@
 import { useEffect, useRef, useState } from "react";
-import { Camera } from "lucide-react";
+import { Camera, Check, RotateCcw } from "lucide-react";
 import QualityControlCard from "../../components/custom/QualityControlCard";
+
+const facialViews: Array<{
+  key: keyof FacialCaptures;
+  label: string;
+  instruction: string;
+}> = [
+  { key: "front", label: "De face", instruction: "Regardez droit devant vous." },
+  { key: "leftProfile", label: "Profil gauche", instruction: "Tournez légèrement la tête vers votre gauche." },
+  { key: "rightProfile", label: "Profil droit", instruction: "Tournez légèrement la tête vers votre droite." },
+];
 
 export default function DocumentVerificationStep2({
   onValidatePhoto,
+  onCaptureChange,
+  initialCapture,
 }: DocumentVerificationStep2Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const [photo, setPhoto] = useState<string | null>(null);
-  const [embedding, setEmbedding] = useState<number[] | null>(null);
+  const [captures, setCaptures] = useState<FacialCaptures>(initialCapture);
+  const [activeView, setActiveView] = useState<keyof FacialCaptures>("front");
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
+  const activeCapture = captures[activeView];
+  const activeInstruction = facialViews.find((view) => view.key === activeView)!;
+  const hasAllCaptures = facialViews.every((view) => captures[view.key] !== null);
 
   const startCamera = async () => {
     if (!navigator.mediaDevices?.getUserMedia) {
@@ -98,19 +113,26 @@ export default function DocumentVerificationStep2({
     }
 
     embeddingContext.drawImage(canvas, 0, 0, 16, 16);
-    setPhoto(image);
-    setEmbedding(createImageEmbedding(embeddingContext));
+    const updatedCaptures = {
+      ...captures,
+      [activeView]: {
+        image,
+        embedding: createImageEmbedding(embeddingContext),
+      },
+    };
+    setCaptures(updatedCaptures);
+    onCaptureChange(updatedCaptures);
     setIsCapturing(false);
   };
 
   const retakePhoto = () => {
-    setPhoto(null);
-    setEmbedding(null);
-    void startCamera();
+    const updatedCaptures = { ...captures, [activeView]: null };
+    setCaptures(updatedCaptures);
+    onCaptureChange(updatedCaptures);
   };
 
   const validatePhoto = () => {
-    if (photo && embedding) onValidatePhoto({ image: photo, embedding });
+    if (hasAllCaptures) onValidatePhoto(captures);
   };
   return (
     <div className="w-full max-w-full ">
@@ -121,41 +143,40 @@ export default function DocumentVerificationStep2({
         </h1>
 
         <p className="mt-1 text-[11px] text-gray-500">
-          Étape 5 sur 10 - Capture biométrique conforme ISO/IEC 19794-5:2011
+          Capturez les trois vues du visage pour compléter la biométrie.
         </p>
       </div>
 
       {/* Zone principale */}
-      <div className="flex items-start gap-5.5">
+      <div className="flex flex-col items-start gap-5.5 lg:flex-row">
         {/* =========================
             ZONE DE CAPTURE
         ========================== */}
-        <div className="relative w-88.75 shrink-0">
+        <div className="relative w-full max-w-88.75 shrink-0">
           <div
             className="
               relative
-              h-94.75
-              w-88.75
+              aspect-3/4
+              w-full
               overflow-hidden
               rounded-lg
               bg-gray-500
             "
           >
-            {photo ? (
+            {activeCapture && (
               <img
-                src={photo}
-                alt="Photo capturée"
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <video
-                ref={videoRef}
-                muted
-                playsInline
-                className="h-full w-full object-cover"
-                aria-label="Aperçu de la caméra"
+                src={activeCapture.image}
+                alt={`Capture ${activeInstruction.label.toLowerCase()}`}
+                className="absolute inset-0 h-full w-full object-cover"
               />
             )}
+            <video
+              ref={videoRef}
+              muted
+              playsInline
+              className={`h-full w-full object-cover ${activeCapture ? "hidden" : ""}`}
+              aria-label="Aperçu de la caméra"
+            />
             <canvas ref={canvasRef} className="hidden" />
 
             {/* Cercle / zone visage */}
@@ -207,7 +228,7 @@ export default function DocumentVerificationStep2({
             <button
               type="button"
               onClick={capturePhoto}
-              disabled={isCapturing || Boolean(photo)}
+              disabled={isCapturing || Boolean(activeCapture)}
               className="
                 absolute
                 bottom-2.25
@@ -238,7 +259,7 @@ export default function DocumentVerificationStep2({
         {/* =========================
             COLONNE DROITE
         ========================== */}
-        <div className="w-80 shrink-0">
+        <div className="w-full min-w-0 shrink-0 lg:w-80">
           {/* Dernière capture */}
           <div
             className="
@@ -250,15 +271,35 @@ export default function DocumentVerificationStep2({
             "
           >
             <h2 className="mb-2.5 text-[12px] font-semibold text-[#092b50]">
-              Dernière capture
+              Captures du visage
             </h2>
+
+            <div className="mb-3 grid grid-cols-3 gap-1.5" role="group" aria-label="Choisir l'angle à capturer">
+              {facialViews.map((view, index) => {
+                const captured = captures[view.key] !== null;
+                return (
+                  <button
+                    key={view.key}
+                    type="button"
+                    aria-pressed={activeView === view.key}
+                    onClick={() => setActiveView(view.key)}
+                    className={`flex min-h-12 flex-col items-center justify-center gap-1 rounded border px-1 text-[10px] font-medium ${activeView === view.key ? "border-[#173d68] bg-[#eef3f8] text-[#173d68]" : "border-gray-200 bg-white text-gray-600"}`}
+                  >
+                    <span>{captured ? <Check className="size-3.5" aria-label="Capturé" /> : `0${index + 1}`}</span>
+                    <span>{view.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <p className="mb-2 text-[11px] text-[#52525b]">{activeInstruction.instruction}</p>
 
             {/* Image */}
             <div className="overflow-hidden rounded-xs border border-gray-200">
               <img
-                src={photo ?? "/images/photo-capture.jpg"}
-                alt={photo ? "Photo capturée" : "Aucune capture"}
-                className="h-33 w-full object-cover"
+                src={activeCapture?.image ?? "/images/photo-capture.jpg"}
+                alt={activeCapture ? `Capture ${activeInstruction.label.toLowerCase()}` : "Aucune capture pour cet angle"}
+                className="h-36 w-full bg-gray-100 object-cover"
               />
             </div>
 
@@ -267,6 +308,7 @@ export default function DocumentVerificationStep2({
               <button
                 type="button"
                 onClick={retakePhoto}
+                disabled={!activeCapture}
                 className="
                   h-6.75
                   w-full
@@ -281,12 +323,12 @@ export default function DocumentVerificationStep2({
                   hover:bg-gray-50
                 "
               >
-                Reprendre
+                  <RotateCcw className="mr-1 inline size-3" />Reprendre cet angle
               </button>
 
               <button
                 type="button"
-                disabled={!photo || !embedding}
+                disabled={!hasAllCaptures}
                 onClick={validatePhoto}
                 className="
                   h-6.75
@@ -302,9 +344,12 @@ export default function DocumentVerificationStep2({
                   disabled:opacity-50
                 "
               >
-                Valider la photo
+                Valider les trois captures
               </button>
             </div>
+            <p className="mt-2 text-center text-[10px] text-[#52525b]">
+              {facialViews.filter((view) => captures[view.key]).length}/3 angles capturés
+            </p>
             {cameraError && (
               <p className="mt-2 text-[9px] text-red-600">{cameraError}</p>
             )}

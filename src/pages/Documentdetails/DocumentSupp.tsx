@@ -18,15 +18,17 @@ import { sessionMetadata } from "../../lib/mock";
 export default function DocumentSupp({
   onBack,
   onContinue,
+  address,
+  onAddressChange,
 }: DocumentSuppProps) {
   // Sélections explicites de l'utilisateur (vide = "pas encore choisi, prendre le défaut")
-  const [paysSel, setPaysSel] = useState("");
-  const [regionSel, setRegionSel] = useState("");
-  const [districtSel, setDistrictSel] = useState("");
-  const [communeSel, setCommuneSel] = useState("");
-  const [fokontanySel, setFokontanySel] = useState("");
-  const [statutSel, setStatutSel] = useState("");
-  const [adresse, setAdresse] = useState("");
+  const [paysSel, setPaysSel] = useState(address.country_id);
+  const [regionSel, setRegionSel] = useState(address.region_id);
+  const [districtSel, setDistrictSel] = useState(address.district_id);
+  const [communeSel, setCommuneSel] = useState(address.commune_id);
+  const [fokontanySel, setFokontanySel] = useState(address.fokontany_id);
+  const [statutSel, setStatutSel] = useState(address.occupancy_type);
+  const [adresse, setAdresse] = useState(address.house_number);
 
   const countriesQuery = useQuery({
     queryKey: ["countries"],
@@ -67,6 +69,33 @@ export default function DocumentSupp({
     queryFn: getOccupancyTypes,
   });
   const statut = statutSel || occupancyTypesQuery.data?.[0]?.value || "";
+
+  const getOptionName = (
+    options: Array<{ id: string; name: string }> | undefined,
+    id: string,
+  ) => options?.find((option) => option.id === id)?.name ?? "";
+
+  const selectedAddress = {
+    country_id: pays,
+    country_name: getOptionName(countriesQuery.data, pays),
+    region_id: region,
+    region_name: getOptionName(regionsQuery.data, region),
+    district_id: district,
+    district_name: getOptionName(districtsQuery.data, district),
+    commune_id: commune,
+    commune_name: getOptionName(communesQuery.data, commune),
+    fokontany_id: fokontany,
+    fokontany_name: getOptionName(fokotanyQuery.data, fokontany),
+    occupancy_type: statut,
+    occupancy_type_name:
+      occupancyTypesQuery.data?.find((option) => option.value === statut)?.label ?? "",
+    house_number: adresse,
+  };
+
+  const handleContinue = () => {
+    onAddressChange(selectedAddress);
+    onContinue(selectedAddress);
+  };
 
   const handlePaysChange = (value: string) => {
     setPaysSel(value);
@@ -204,7 +233,7 @@ export default function DocumentSupp({
       <div className="mt-5 border-t border-gray-200 pt-3">
         <NavigationLv1stepper
           onBack={onBack}
-          onContinue={onContinue}
+          onContinue={handleContinue}
           isfinal={true}
           disabled={
             !pays || !region || !district || !commune || !fokontany || !statut

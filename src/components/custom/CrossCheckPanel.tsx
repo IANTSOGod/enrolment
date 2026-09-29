@@ -6,9 +6,13 @@ export default function CrossCheckPanel({
   fields,
   onChange,
   onManualVerify,
+  values: suppliedValues,
 }: CrossCheckPanelProps) {
-  const [values, setValues] = useState<Record<string, string>>(
-    Object.fromEntries(fields.map((field) => [field.key, field.inputValue])),
+  const [values, setValues] = useState<Record<string, string>>(() =>
+    Object.fromEntries(fields.map((field) => [
+      field.key,
+      suppliedValues?.[field.key] || field.inputValue,
+    ])),
   );
 
   const handleChange = (fieldKey: string, value: string) => {

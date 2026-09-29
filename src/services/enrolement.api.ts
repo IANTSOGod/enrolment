@@ -1,6 +1,120 @@
 
 const API_URL = import.meta.env.VITE_API_URL ?? '';
 
+function getAccessToken(): string {
+	const accessToken = localStorage.getItem('accessToken');
+	if (!accessToken) throw new Error('Session expirée. Veuillez vous reconnecter.');
+	return accessToken;
+}
+
+async function getErrorMessage(response: Response): Promise<string> {
+	const message = await response.text();
+	return message || `Erreur HTTP ${response.status}`;
+}
+
+export async function uploadFile(file: File): Promise<UploadedFile> {
+	const formData = new FormData();
+	formData.append('file', file);
+	const response = await fetch(`${API_URL}/files`, {
+		method: 'POST',
+		headers: { Authorization: `Bearer ${getAccessToken()}` },
+		body: formData
+	});
+
+	if (!response.ok) throw new Error(await getErrorMessage(response));
+
+	const result = (await response.json()) as UploadedFile;
+	if (!result.path) throw new Error('La réponse de /files ne contient pas de chemin.');
+	return result;
+}
+
+async function dataUrlToFile(dataUrl: string, filename: string): Promise<File> {
+	const response = await fetch(dataUrl);
+	const blob = await response.blob();
+	return new File([blob], filename, { type: blob.type || 'image/jpeg' });
+}
+
+export async function submitEnrolmentDraft(draft: EnrolmentDraft): Promise<unknown> {
+	if (!draft.documents?.front || !draft.documents.back) {
+		throw new Error('Les images recto et verso du CIN sont obligatoires.');
+	}
+	const captures = [
+		{ key: 'front' as const, capture: draft.faceCapture.front },
+		{ key: 'leftProfile' as const, capture: draft.faceCapture.leftProfile },
+		{ key: 'rightProfile' as const, capture: draft.faceCapture.rightProfile }
+	];
+	if (captures.some(({ capture }) => !capture)) {
+		throw new Error('Les trois captures faciales sont obligatoires.');
+	}
+	if (captures.some(({ capture }) =>
+		!capture?.embedding.length || capture.embedding.some((value) => !Number.isFinite(value))
+	)) {
+		throw new Error('Chaque capture faciale doit contenir un vecteur biométrique valide.');
+	}
+	if (!draft.consent.truthAccepted || !draft.consent.biometricAccepted || !draft.consent.signature) {
+		throw new Error('Le consentement et la signature sont obligatoires.');
+	}
+
+	const [frontDocument, backDocument] = await Promise.all([
+		uploadFile(draft.documents.front),
+		uploadFile(draft.documents.back)
+	]);
+
+	const facialFiles = await Promise.all(
+		captures.map(async ({ key, capture }) => ({
+			key,
+			capture: capture!,
+			file: await dataUrlToFile(capture!.image, `face-${key}.jpg`)
+		}))
+	);
+	const uploadedFacialCaptures = await Promise.all(
+		facialFiles.map(async ({ key, capture, file }) => ({
+			key,
+			capture,
+			upload: await uploadFile(file)
+		}))
+	);
+
+	const payload: EnrolmentPayload = {
+		person: draft.identity,
+		address: {
+			house_number: draft.address.house_number,
+			fokontany_id: draft.address.fokontany_id,
+			occupancy_type: draft.address.occupancy_type
+		},
+		contacts: [{
+			type: 'phone',
+			value: '+261341234567',
+			is_primary: true,
+			is_verified: false
+		}],
+		relationships: [{
+			related_person_id: '550e8400-e29b-41d4-a716-446655440000',
+			related_person_name: `${draft.identity.last_name} ${draft.identity.first_name}`,
+			relationship_type: 'FATHER'
+		}],
+		documents: [{
+			document_type_id: '6851e3d4-ae17-4a93-a48e-1853a596367d',
+			front_file_path: frontDocument.path,
+			back_file_path: backDocument.path
+		}],
+		face_biometrics: uploadedFacialCaptures.map(({ capture, upload }) => ({
+			image_file_path: upload.path,
+			model_name: 'FaceNet',
+			model_version: '1.0.0',
+			embeding: JSON.stringify(capture.embedding),
+			quality_score: 98.5,
+			face_detected: true
+		})),
+		created_offline: false,
+		enrolment_type: 'NEW'
+	};
+
+	const validationErrors = validateEnrolmentPayload(payload);
+	if (validationErrors.length > 0) throw new Error(validationErrors.join(' '));
+	return createEnrolment(payload);
+}
+
 export function validateEnrolmentPayload(data: EnrolmentPayload): string[] {
 	const errors: string[] = [];
 
@@ -34,14 +148,9 @@ export async function createEnrolment(
 	data: EnrolmentPayload,
 	options: RequestInit = {}
 ): Promise<unknown> {
-	const accessToken = localStorage.getItem('accessToken');
-	if (!accessToken) {
-		throw new Error('Session expirée. Veuillez vous reconnecter.');
-	}
-
 	const headers = new Headers(options.headers);
 	headers.set('Content-Type', 'application/json');
-	headers.set('Authorization', `Bearer ${accessToken}`);
+	headers.set('Authorization', `Bearer ${getAccessToken()}`);
 
 	const response = await fetch(`${API_URL}/enrolments`, {
 		...options,
@@ -51,9 +160,10 @@ export async function createEnrolment(
 	});
 
 	if (!response.ok) {
-		const message = await response.text();
-		throw new Error(message || `Erreur HTTP ${response.status}`);
+		throw new Error(await getErrorMessage(response));
 	}
 
-	return response.status === 204 ? undefined : response.json();
+	if (response.status === 204) return undefined;
+	const responseBody = await response.text();
+	return responseBody ? JSON.parse(responseBody) : undefined;
 }

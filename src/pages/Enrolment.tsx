@@ -9,6 +9,43 @@ import EnrolmentUpdate from "./enrolmentstepper/update/EnrolmentUpdate";
 export default function Enrolment() {
   const [currentStep, setCurrentStep] = useState(1);
   const [type, setType] = useState<string>("new");
+  const [draft, setDraft] = useState<EnrolmentDraft>({
+    identity: {
+      first_name: "",
+      last_name: "",
+      date_of_birth: "",
+      birth_place: "",
+      country_of_birth_id: "",
+      country_of_birth_name: "",
+      sex: "",
+    },
+    documents: null,
+    faceCapture: {
+      front: null,
+      leftProfile: null,
+      rightProfile: null,
+    },
+    address: {
+      country_id: "",
+      country_name: "",
+      region_id: "",
+      region_name: "",
+      district_id: "",
+      district_name: "",
+      commune_id: "",
+      commune_name: "",
+      fokontany_id: "",
+      fokontany_name: "",
+      occupancy_type: "",
+      occupancy_type_name: "",
+      house_number: "",
+    },
+    consent: {
+      truthAccepted: false,
+      biometricAccepted: false,
+      signature: "",
+    },
+  });
 
   return (
     <div className="bg-[#f8f9fb]">
@@ -41,11 +78,16 @@ export default function Enrolment() {
         )}
 
         {currentStep === 2 && type === "new" && (
-          <EnrolmentDetails setlv1step={setCurrentStep}></EnrolmentDetails>
+          <EnrolmentDetails
+            draft={draft}
+            onDraftChange={setDraft}
+            setlv1step={setCurrentStep}
+          />
         )}
 
         {currentStep === 3 && type === "new" && (
           <EnrolmentBio
+            draft={draft}
             onBack={() => {
               setCurrentStep(2);
             }}

@@ -1,7 +1,8 @@
 import { CheckCircle2, ScanLine, Volume2 } from "lucide-react";
 
 export default function DocumentCaptureSuccess({
-  imageUrl,
+  frontImageUrl,
+  backImageUrl,
   copyLabel = "Copie Originale",
   mrzStatus,
   nfcStatus,
@@ -20,13 +21,13 @@ export default function DocumentCaptureSuccess({
 
       <div className="flex flex-col items-center align-center justify-center sm:flex-row relative gap-5 overflow-hidden">
         <img
-          src={imageUrl}
-          alt="Document capturé"
+          src={frontImageUrl}
+          alt="Recto de la carte capturé"
           className="h-64 w-64 object-cover sm:h-72 rounded-lg border border-[#e4e4e7]"
         />
         <img
-          src={imageUrl}
-          alt="Document capturé 2"
+          src={backImageUrl}
+          alt="Verso de la carte capturé"
           className="h-64 w-64 object-cover sm:h-72 rounded-lg border border-[#e4e4e7]"
         />
       </div>

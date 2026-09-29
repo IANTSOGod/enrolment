@@ -1,5 +1,6 @@
 interface Documentcapturesuccessinterface {
-  imageUrl: string;
+  frontImageUrl: string;
+  backImageUrl: string;
   copyLabel?: string;
   mrzStatus: { label: string; value: string; valid: boolean };
   nfcStatus: { label: string; value: string; valid: boolean };
@@ -22,6 +23,7 @@ type CrossCheckField = {
 interface CrossCheckPanelProps {
   confidence: number;
   fields: CrossCheckField[];
+  values?: Record<string, string>;
   onChange?: (fieldKey: string, value: string) => void;
   onManualVerify?: (fieldKey: string) => void;
 }
@@ -42,6 +44,11 @@ interface VerificationHeaderinterface {
 interface Documentverificationcininterface {
   onBack: () => void;
   onContinue: () => void;
+  identity: EnrolmentDraft["identity"];
+  documents: EnrolmentDraft["documents"];
+  onDocumentsChange: (files: { front: File; back: File }) => void;
+  onIdentityDetected: (identity: CinScanResult["identity"]) => void;
+  onIdentityChange: (key: string, value: string) => void;
   isfinal: boolean;
 }
 
@@ -175,6 +182,60 @@ interface EnrolmentPayload {
   enrolment_type: string;
 }
 
+interface EnrolmentDraft {
+  identity: {
+    first_name: string;
+    last_name: string;
+    date_of_birth: string;
+    birth_place: string;
+    country_of_birth_id: string;
+    country_of_birth_name: string;
+    sex: string;
+  };
+  documents: { front: File; back: File } | null;
+  faceCapture: FacialCaptures;
+  address: {
+    country_id: string;
+    country_name: string;
+    region_id: string;
+    region_name: string;
+    district_id: string;
+    district_name: string;
+    commune_id: string;
+    commune_name: string;
+    fokontany_id: string;
+    fokontany_name: string;
+    occupancy_type: string;
+    occupancy_type_name: string;
+    house_number: string;
+  };
+  consent: {
+    truthAccepted: boolean;
+    biometricAccepted: boolean;
+    signature: string;
+  };
+}
+
+interface UploadedFile {
+  filename: string;
+  path: string;
+}
+
+interface CinScanResult {
+  identity: {
+    first_name: string;
+    last_name: string;
+    date_of_birth: string;
+    birth_place: string;
+    country_of_birth_id: string;
+    country_of_birth_name: string;
+    sex: string;
+  };
+  confidence: number;
+  mrzStatus: { label: string; value: string; valid: boolean };
+  nfcStatus: { label: string; value: string; valid: boolean };
+}
+
 interface SelectFieldProps {
   label: string;
   value: string;
@@ -193,7 +254,9 @@ interface SessionMetadata {
 
 interface DocumentSuppProps {
   onBack: () => void;
-  onContinue: () => void;
+  onContinue: (address: EnrolmentDraft["address"]) => void;
+  address: EnrolmentDraft["address"];
+  onAddressChange: (address: EnrolmentDraft["address"]) => void;
 }
 
 interface PhotoCapture {
@@ -201,10 +264,26 @@ interface PhotoCapture {
   embedding: number[];
 }
 
+interface FacialCaptures {
+  front: PhotoCapture | null;
+  leftProfile: PhotoCapture | null;
+  rightProfile: PhotoCapture | null;
+}
+
 interface DocumentVerificationStep2Props {
-  onValidatePhoto: (capture: PhotoCapture) => void;
+  onValidatePhoto: (captures: FacialCaptures) => void;
+  onCaptureChange: (captures: FacialCaptures) => void;
+  initialCapture: FacialCaptures;
 }
 interface ConsentementProps {
   onBack: () => void;
-  onContinue: () => void;
+  onContinue: (consent: EnrolmentDraft["consent"]) => void;
+  consent: EnrolmentDraft["consent"];
+  onConsentChange: (consent: EnrolmentDraft["consent"]) => void;
+}
+
+interface EnrolmentDetailsProps {
+  draft: EnrolmentDraft;
+  onDraftChange: React.Dispatch<React.SetStateAction<EnrolmentDraft>>;
+  setlv1step: (step: number) => void;
 }

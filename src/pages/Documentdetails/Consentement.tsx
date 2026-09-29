@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
-import { useMutation } from "@tanstack/react-query";
 import NavigationLv1stepper from "../../components/custom/steppermanagement/NavigationLv1stepper";
-import {
-  createEnrolment,
-  validateEnrolmentPayload,
-} from "../../services/enrolement.api";
-import { mockEnrolmentPayload } from "../../lib/mock";
 
-export default function Consentement({ onBack, onContinue }: ConsentementProps) {
+export default function Consentement({
+  onBack,
+  onContinue,
+  consent,
+  onConsentChange,
+}: ConsentementProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drawingRef = useRef(false);
-  const [truthAccepted, setTruthAccepted] = useState(false);
-  const [biometricAccepted, setBiometricAccepted] = useState(false);
-  const [hasSignature, setHasSignature] = useState(false);
+  const [truthAccepted, setTruthAccepted] = useState(consent.truthAccepted);
+  const [biometricAccepted, setBiometricAccepted] = useState(consent.biometricAccepted);
+  const [hasSignature, setHasSignature] = useState(Boolean(consent.signature));
 
   // Effet DOM (init canvas) — reste un useEffect, ce n'est pas du fetching
   useEffect(() => {
@@ -31,6 +30,19 @@ export default function Consentement({ onBack, onContinue }: ConsentementProps) 
     context.lineCap = "round";
     context.strokeStyle = "#092b50";
   }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext("2d");
+    if (canvas && context && consent.signature) {
+      const bounds = canvas.getBoundingClientRect();
+      const signatureImage = new Image();
+      signatureImage.onload = () => {
+        context.drawImage(signatureImage, 0, 0, bounds.width, bounds.height);
+      };
+      signatureImage.src = consent.signature;
+    }
+  }, [consent.signature]);
 
   const getPoint = (event: PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -65,6 +77,13 @@ export default function Consentement({ onBack, onContinue }: ConsentementProps) 
   };
 
   const stopDrawing = () => {
+    if (drawingRef.current) {
+      onConsentChange({
+        truthAccepted,
+        biometricAccepted,
+        signature: canvasRef.current?.toDataURL("image/png") ?? "",
+      });
+    }
     drawingRef.current = false;
   };
 
@@ -75,29 +94,20 @@ export default function Consentement({ onBack, onContinue }: ConsentementProps) 
 
     context.clearRect(0, 0, canvas.width, canvas.height);
     setHasSignature(false);
+    onConsentChange({ truthAccepted, biometricAccepted, signature: "" });
   };
 
   const isComplete = truthAccepted && biometricAccepted && hasSignature;
 
-  const enrolmentMutation = useMutation({
-    mutationFn: async () => {
-      const validationErrors = validateEnrolmentPayload(mockEnrolmentPayload);
-      if (validationErrors.length > 0) {
-        throw new Error(validationErrors.join(" "));
-      }
-      return createEnrolment(mockEnrolmentPayload);
-    },
-    onSuccess: () => {
-      onContinue();
-    },
-  });
+  const updateTruthAccepted = (value: boolean) => {
+    setTruthAccepted(value);
+    onConsentChange({ truthAccepted: value, biometricAccepted, signature: consent.signature });
+  };
 
-  const submitError =
-    enrolmentMutation.error instanceof Error
-      ? enrolmentMutation.error.message
-      : enrolmentMutation.isError
-        ? "La validation de l'enrôlement a échoué."
-        : "";
+  const updateBiometricAccepted = (value: boolean) => {
+    setBiometricAccepted(value);
+    onConsentChange({ truthAccepted, biometricAccepted: value, signature: consent.signature });
+  };
 
   return (
     <div className="w-full max-w-full">
@@ -129,7 +139,7 @@ export default function Consentement({ onBack, onContinue }: ConsentementProps) 
           <input
             type="checkbox"
             checked={truthAccepted}
-            onChange={(event) => setTruthAccepted(event.target.checked)}
+            onChange={(event) => updateTruthAccepted(event.target.checked)}
             className="mt-0.5 size-5 shrink-0 accent-[#1a237e]"
           />
           <span>Je déclare que les informations fournies sont vraies et exactes.</span>
@@ -139,7 +149,7 @@ export default function Consentement({ onBack, onContinue }: ConsentementProps) 
           <input
             type="checkbox"
             checked={biometricAccepted}
-            onChange={(event) => setBiometricAccepted(event.target.checked)}
+            onChange={(event) => updateBiometricAccepted(event.target.checked)}
             className="mt-0.5 size-5 shrink-0 accent-[#1a237e]"
           />
           <span>
@@ -184,24 +194,17 @@ export default function Consentement({ onBack, onContinue }: ConsentementProps) 
         </p>
       </section>
 
-      {submitError && (
-        <p className="mt-3 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-[11px] text-red-600">
-          {submitError}
-        </p>
-      )}
-
       <div className="mt-5 border-t border-[#d5d7e2] pt-4">
         <NavigationLv1stepper
           onBack={onBack}
-          onContinue={() => enrolmentMutation.mutate()}
+          onContinue={() => onContinue({
+            truthAccepted,
+            biometricAccepted,
+            signature: canvasRef.current?.toDataURL("image/png") ?? "",
+          })}
           isfinal={true}
-          disabled={!isComplete || enrolmentMutation.isPending}
+          disabled={!isComplete}
         />
-        {enrolmentMutation.isPending && (
-          <p className="mt-2 text-right text-[10px] text-[#52525b]">
-            Validation de l'enrôlement...
-          </p>
-        )}
       </div>
     </div>
   );
