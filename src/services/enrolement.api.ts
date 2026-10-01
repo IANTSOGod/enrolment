@@ -1,7 +1,7 @@
 
 const API_URL = import.meta.env.VITE_API_URL ?? '';
 
-function getAccessToken(): string {
+export function getAccessToken(): string {
 	const accessToken = localStorage.getItem('accessToken');
 	if (!accessToken) throw new Error('Session expirée. Veuillez vous reconnecter.');
 	return accessToken;

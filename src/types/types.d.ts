@@ -65,7 +65,7 @@ type StatOverview = {
 };
 
 type ActivityRow = {
-  id: number;
+  id: string;
   applicantName: string;
   reference: string;
   time: string;
