@@ -14,7 +14,7 @@ export async function scanCIN(images: {
           last_name: "RAKOTOMALALA",
           date_of_birth: "1985-04-15",
           birth_place: "ANTANANARIVO",
-          country_of_birth_id: "9d4a3e6b-4971-4baa-94ea-aa42489a2c54",
+          country_of_birth_id: "c02a8808-4745-48a4-8bc2-76235c151031",
           country_of_birth_name: "Madagascar",
           sex: "M",
         },

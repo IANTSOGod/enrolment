@@ -94,7 +94,7 @@ export async function submitEnrolmentDraft(draft: EnrolmentDraft): Promise<unkno
 			relationship_type: 'FATHER'
 		}],
 		documents: [{
-			document_type_id: '6851e3d4-ae17-4a93-a48e-1853a596367d',
+			document_type_id: '756c47a4-0409-4d0d-8aa9-125c05b76813',
 			front_file_path: frontDocument.path,
 			back_file_path: backDocument.path
 		}],
@@ -151,7 +151,7 @@ export async function createEnrolment(
 	const headers = new Headers(options.headers);
 	headers.set('Content-Type', 'application/json');
 	headers.set('Authorization', `Bearer ${getAccessToken()}`);
-
+console.log(data)
 	const response = await fetch(`${API_URL}/enrolments`, {
 		...options,
 		method: 'POST',

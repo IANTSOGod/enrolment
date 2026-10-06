@@ -35,7 +35,7 @@ export default function DocumentSupp({
     queryFn: getCountrie,
   });
   const pays = paysSel || countriesQuery.data?.[0]?.id || "";
-
+  console.log(pays)
   const regionsQuery = useQuery({
     queryKey: ["regions", pays],
     queryFn: () => getRegions(pays),
@@ -98,6 +98,7 @@ export default function DocumentSupp({
   };
 
   const handlePaysChange = (value: string) => {
+    console.log(value)
     setPaysSel(value);
     setRegionSel("");
     setDistrictSel("");

@@ -14,7 +14,9 @@ export default function EnrolmentBio({
   const frontPreviewRef = useRef<HTMLImageElement>(null);
   const backPreviewRef = useRef<HTMLImageElement>(null);
   const submission = useMutation({
-    mutationFn: () => submitEnrolmentDraft(draft),
+    mutationFn: () => 
+      submitEnrolmentDraft(draft)
+    
   });
   const completedItems = [
     Object.values(draft.identity).every(Boolean),

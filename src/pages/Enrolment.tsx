@@ -5,8 +5,10 @@ import EnrolmentType from "./enrolmentstepper/EnrolmentType";
 import EnrolmentBio from "./enrolmentstepper/new/EnrolmentBio";
 import EnrolmentDetails from "./enrolmentstepper/new/EnrolmentDetails";
 import EnrolmentUpdate from "./enrolmentstepper/update/EnrolmentUpdate";
+import { useNavigate } from "react-router-dom";
 
 export default function Enrolment() {
+  const navige = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [type, setType] = useState<string>("new");
   const [draft, setDraft] = useState<EnrolmentDraft>({
