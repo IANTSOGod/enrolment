@@ -11,8 +11,7 @@ export default function QualityControlCard() {
       border-gray-200
       bg-white
       p-3
-    "
-    >
+    ">
       <h2 className="mb-2.5 text-[12px] font-semibold text-[#092b50]">
         Contrôles de qualité
       </h2>

@@ -15,8 +15,12 @@ export default function DocumentcaptureInit({
   onScanResult: (result: CinScanResult) => void;
   initialImages: { front: File; back: File } | null;
 }) {
-  const [frontImage, setFrontImage] = useState<File | null>(initialImages?.front ?? null);
-  const [backImage, setBackImage] = useState<File | null>(initialImages?.back ?? null);
+  const [frontImage, setFrontImage] = useState<File | null>(
+    initialImages?.front ?? null,
+  );
+  const [backImage, setBackImage] = useState<File | null>(
+    initialImages?.back ?? null,
+  );
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: scanCIN,
@@ -47,8 +51,16 @@ export default function DocumentcaptureInit({
       </div>
 
       <div className="relative flex flex-col items-center justify-center gap-5 overflow-hidden sm:flex-row">
-        <CaptureFace label="Recto" file={frontImage} onFileChange={setFrontImage} />
-        <CaptureFace label="Verso" file={backImage} onFileChange={setBackImage} />
+        <CaptureFace
+          label="Recto"
+          file={frontImage}
+          onFileChange={setFrontImage}
+        />
+        <CaptureFace
+          label="Verso"
+          file={backImage}
+          onFileChange={setBackImage}
+        />
       </div>
 
       {isError && (
@@ -61,8 +73,7 @@ export default function DocumentcaptureInit({
         <Button
           onClick={handleScan}
           disabled={isPending || !frontImage || !backImage}
-          className="h-12.75 min-w-34 rounded-xl bg-primary px-6 text-[15px] font-semibold text-white hover:bg-primary"
-        >
+          className="h-12.75 min-w-34 rounded-xl bg-primary px-6 text-[15px] font-semibold text-white hover:bg-primary">
           {isPending ? "Chargement..." : "Valider les deux faces"}
         </Button>
       </div>
@@ -100,7 +111,11 @@ function CaptureFace({
     <section className="flex h-72 w-full flex-col overflow-hidden rounded-lg border border-[#e4e4e7] bg-[#fafafa] sm:flex-1">
       <div className="flex flex-1 items-center justify-center overflow-hidden">
         {file ? (
-          <img ref={imageRef} alt={`Aperçu du ${label.toLowerCase()} de la carte`} className="h-full w-full object-contain" />
+          <img
+            ref={imageRef}
+            alt={`Aperçu du ${label.toLowerCase()} de la carte`}
+            className="h-full w-full object-contain"
+          />
         ) : (
           <div className="flex flex-col items-center gap-2 text-sm text-[#71717a]">
             <ScanLine className="size-8" aria-hidden="true" />
@@ -118,8 +133,16 @@ function CaptureFace({
           className="sr-only"
           onChange={(event) => onFileChange(event.target.files?.[0] ?? null)}
         />
-        <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()}>
-          {file ? <RefreshCw aria-hidden="true" /> : <ImagePlus aria-hidden="true" />}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => inputRef.current?.click()}>
+          {file ? (
+            <RefreshCw aria-hidden="true" />
+          ) : (
+            <ImagePlus aria-hidden="true" />
+          )}
           {file ? "Reprendre" : "Capturer"}
         </Button>
       </div>

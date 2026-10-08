@@ -9,10 +9,12 @@ export default function CrossCheckPanel({
   values: suppliedValues,
 }: CrossCheckPanelProps) {
   const [values, setValues] = useState<Record<string, string>>(() =>
-    Object.fromEntries(fields.map((field) => [
-      field.key,
-      suppliedValues?.[field.key] || field.inputValue,
-    ])),
+    Object.fromEntries(
+      fields.map((field) => [
+        field.key,
+        suppliedValues?.[field.key] || field.inputValue,
+      ]),
+    ),
   );
 
   const handleChange = (fieldKey: string, value: string) => {
@@ -118,8 +120,7 @@ export default function CrossCheckPanel({
                 <button
                   type="button"
                   onClick={() => onManualVerify?.(field.key)}
-                  className="mt-2 flex items-center gap-1.5 rounded-md border border-red-300 px-3 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50"
-                >
+                  className="mt-2 flex items-center gap-1.5 rounded-md border border-red-300 px-3 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50">
                   <PenLine className="h-3.5 w-3.5" />
                   Vérifier manuellement
                 </button>
